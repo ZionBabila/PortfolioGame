@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d879fc500b5edb41a6fe39f9f32bab8, type: 3}
+  m_Name: 05_Links
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.StationData
+  title: Contact
+  kind: 4
+  subtitle: Let's talk
+  body: Where to find me.
+  image: {fileID: 0}
+  accent: {r: 0.95, g: 0.8, b: 0.3, a: 1}
+  links:
+  - label: GitHub
+    url: https://github.com/ZionBabila
+  - label: Email
+    url: mailto:you@example.com

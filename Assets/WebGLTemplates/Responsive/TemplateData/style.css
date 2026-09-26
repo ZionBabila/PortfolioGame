@@ -1,0 +1,51 @@
+/* Canvas fills the whole browser window in any orientation (16:9 desktop, 9:16 phone). */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #73b8e6;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#unity-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  display: block;
+  outline: none;
+}
+
+#loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #fcf7ee;
+  color: #141219;
+  transition: opacity 0.5s;
+}
+#loading.done { opacity: 0; pointer-events: none; }
+#loading .title { font-size: 28px; font-weight: 700; letter-spacing: 0.02em; }
+#loading .hint { font-size: 14px; opacity: 0.6; }
+#loading .bar {
+  width: min(320px, 70vw);
+  height: 14px;
+  border: 3px solid #141219;
+  border-radius: 10px;
+  overflow: hidden;
+}
+#bar-fill { width: 0; height: 100%; background: #f99e52; transition: width 0.2s; }
+
+#warning { position: fixed; left: 0; right: 0; top: 0; }
+#warning div { padding: 10px; text-align: center; }
+#warning .warn { background: #ffe680; }
+#warning .error { background: #e0473d; color: #fff; }
