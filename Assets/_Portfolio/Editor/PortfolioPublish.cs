@@ -62,6 +62,14 @@ namespace Portfolio.EditorTools
             StartUpload();
         }
 
+        /// <summary>Called by Portfolio → Build WebGL when you choose "Upload to website" (already confirmed there).</summary>
+        internal static void UploadAfterBuild()
+        {
+            if (CanStart()) StartUpload();
+        }
+
+        internal static void TestLocallyNow() => TestLocally();
+
         [MenuItem("Portfolio/Test Build Locally", priority = 102)]
         static void TestLocally()
         {

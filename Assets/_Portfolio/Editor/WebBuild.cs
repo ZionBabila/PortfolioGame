@@ -16,7 +16,24 @@ namespace Portfolio.EditorTools
         public const string OutputDir = "Builds/WebGL";
 
         [MenuItem("Portfolio/Build WebGL")]
-        public static void BuildMenu() => Build();
+        public static void BuildMenu()
+        {
+            if (!Build())
+            {
+                EditorUtility.DisplayDialog("Build WebGL", "The build failed. See the Console for the errors.", "OK");
+                return;
+            }
+            // The build only lives on this computer (Builds/WebGL). Ask what to do with it next.
+            switch (EditorUtility.DisplayDialogComplex("Build finished",
+                        "The build is ready in Builds/WebGL (on this computer only).
+
+Upload it to the website, or test it in your browser first?",
+                        "Upload to website", "Close", "Test in browser"))
+            {
+                case 0: PortfolioPublish.UploadAfterBuild(); break;
+                case 2: PortfolioPublish.TestLocallyNow(); break;
+            }
+        }
 
         public static void BuildCli()
         {
