@@ -94,6 +94,16 @@ namespace Portfolio.EditorTools
             var agent = player.GetComponent<NavMeshAgent>();
             agent.radius = 0.3f;
             agent.height = 1.3f;
+            // Camera zones are triggers: the player needs a collider + kinematic rigidbody to fire them.
+            // Ignore Raycast keeps the player (and the zones) from catching floor clicks.
+            player.layer = 2;
+            var body = player.AddComponent<CapsuleCollider>();
+            body.center = new Vector3(0f, 0.65f, 0f);
+            body.height = 1.3f;
+            body.radius = 0.3f;
+            var rb = player.AddComponent<Rigidbody>();
+            rb.isKinematic = true;
+            rb.useGravity = false;
 
             var marker = Prim(PrimitiveType.Cylinder, "ClickMarker", null, Vector3.zero, new Vector3(0.5f, 0.01f, 0.5f),
                 ToonMat("Marker", new Color(1f, 0.95f, 0.5f), 0f));
@@ -106,28 +116,15 @@ namespace Portfolio.EditorTools
             var view = floor;
             var apron = workshop.GetComponentsInChildren<Renderer>().FirstOrDefault(r => r.name == "FloorApron");
             if (apron) view.Encapsulate(apron.bounds);
-            var rc = cam.GetComponent<ResponsiveCamera>();
-            SetValues(rc,
-                ("mapCenter", new Vector3(floor.center.x, 0f, floor.center.z)),
-                ("mapHalfExtents", new Vector2(floor.extents.x * 0.55f, floor.extents.z * 0.55f)),
-                // A bit more frontal than the corner diagonal: the floor reads less like a diamond, so a much wider
-                // view fits inside the walls (searched in-editor: ~16 m of the 18 m width at 16:9).
-                ("viewAngles", new Vector3(45f, yaw + 17.5f, 0f)),
-                ("distance", 30f),
-                ("landscapeSize", 6f),
-                ("landscapeFollow", 0.7f),
-                ("portraitVisibleWidth", 9f),
-                ("confineToRoom", true),
-                ("roomMin", new Vector2(floor.min.x, floor.min.z)),
-                ("roomMax", new Vector2(floor.max.x, floor.max.z)),
-                ("viewFloorMin", new Vector2(view.min.x, view.min.z)),
-                ("viewFloorMax", new Vector2(view.max.x, view.max.z)),
-                ("floorY", floor.max.y),
-                ("wallHeight", walls.max.y - floor.max.y));
+            // A bit more frontal than the corner diagonal: the floor reads less like a diamond, so a much wider
+            // view fits inside the walls (~16 m of the 18 m width at 16:9).
+            var viewRotation = Quaternion.Euler(45f, yaw + 17.5f, 0f);
+            BuildCinemachineRig(player.transform, stations, viewRotation, floor, walls, view);
 
             BuildUI(out var panel, out var nav);
             var mover = player.GetComponent<ClickToMove>();
             SetRefs(mover, ("cam", cam), ("clickMarker", marker.transform), ("body", player.transform.Find("Body")));
+            SetValues(mover, ("clickMask", Physics.DefaultRaycastLayers)); // skips Ignore Raycast: player + camera zones
             var game = new GameObject("PortfolioGame").AddComponent<PortfolioGame>();
             SetRefs(game, ("player", mover), ("panel", panel), ("quickNav", nav));
 
@@ -271,6 +268,7 @@ namespace Portfolio.EditorTools
                     case Vector2 v2: p.vector2Value = v2; break;
                     case Vector3 v3: p.vector3Value = v3; break;
                     case bool b: p.boolValue = b; break;
+                    case int i: p.intValue = i; break;
                 }
             }
             so.ApplyModifiedPropertiesWithoutUndo();

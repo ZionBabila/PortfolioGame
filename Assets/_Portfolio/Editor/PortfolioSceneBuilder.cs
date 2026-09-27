@@ -280,8 +280,10 @@ namespace Portfolio.EditorTools
             cam.nearClipPlane = 0.1f;
             cam.farClipPlane = 200f;
             go.AddComponent<AudioListener>();
-            var rc = go.AddComponent<ResponsiveCamera>();
-            SetRefs(rc, ("target", target));
+            // Cinemachine drives this camera; the CinemachineCameras decide where it looks.
+            var brain = go.AddComponent<Unity.Cinemachine.CinemachineBrain>();
+            brain.DefaultBlend = new Unity.Cinemachine.CinemachineBlendDefinition(
+                Unity.Cinemachine.CinemachineBlendDefinition.Styles.EaseInOut, 1.1f);
             return cam;
         }
 

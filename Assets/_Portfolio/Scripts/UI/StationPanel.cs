@@ -90,7 +90,7 @@ namespace Portfolio
 
         void Layout(float eased)
         {
-            if (ResponsiveCamera.IsPortrait)
+            if (Aspect.IsPortrait)
             {
                 sheet.anchorMin = new Vector2(0f, 0f);
                 sheet.anchorMax = new Vector2(1f, portraitHeight);

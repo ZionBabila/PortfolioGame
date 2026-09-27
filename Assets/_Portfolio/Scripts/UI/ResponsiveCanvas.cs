@@ -16,7 +16,7 @@ namespace Portfolio
 
         void Update()
         {
-            bool portrait = ResponsiveCamera.IsPortrait;
+            bool portrait = Aspect.IsPortrait;
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = portrait ? portraitReference : landscapeReference;
             scaler.matchWidthOrHeight = portrait ? 0f : 1f;
