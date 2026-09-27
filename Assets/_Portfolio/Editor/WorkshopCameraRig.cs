@@ -17,8 +17,8 @@ namespace Portfolio.EditorTools
         const int FollowPriority = 10;
         const float CameraDistance = 30f;
         // Overview framing before the confiner caps it to the widest view inside the walls.
-        const float OverviewLandscapeSize = 4.8f; // max that fits at 16:9 is ~5.3 (18.8 m across)
-        const float OverviewPortraitWidth = 6.8f; // max at 9:16 is ~8.3 m across
+        const float OverviewLandscapeSize = 4.0f; // max that fits at 16:9 is ~5.3; the gap is room for look-ahead
+        const float OverviewPortraitWidth = 6.2f; // max at 9:16 is ~8.3 m across; the gap is room for look-ahead
         // How far the gallery camera turns from the main angle to face the mezzanine wall.
         const float GalleryYawOffset = 45f;
 
@@ -44,8 +44,8 @@ namespace Portfolio.EditorTools
             };
             var rigRoot = new GameObject("Cameras").transform;
 
-            // Overview: as much of the room as fits inside the walls, drifting a little toward the player and
-            // rising (and zooming out) as the player climbs. Zones zoom in from here.
+            // Overview: as much of the room as fits inside the walls, following the player with look-ahead
+            // (rule of thirds toward where they face) and rising/zooming out as they climb. Zones zoom in from here.
             var overviewTarget = new GameObject("Overview Target").AddComponent<OverviewTarget>();
             overviewTarget.transform.SetParent(rigRoot, false);
             var roomCenter = new Vector3(floor.center.x, floor.max.y, floor.center.z);
@@ -54,12 +54,13 @@ namespace Portfolio.EditorTools
             SetValues(overviewTarget, ("roomCenter", roomCenter));
 
             var overview = NewVcam("CM Overview", rigRoot, viewRotation, overviewTarget.transform, FollowPriority);
-            overview.GetComponent<CinemachinePositionComposer>().Damping = new Vector3(1f, 1f, 1f);
+            overview.GetComponent<CinemachinePositionComposer>().Damping = new Vector3(0.5f, 0.5f, 0.5f); // the target already smooths its look-ahead
             overview.GetComponent<CinemachineRoomConfiner>().PanRoom = 1f; // use the widest view that fits
             SetValues(overview.GetComponent<AspectLens>(),
                 ("landscapeSize", OverviewLandscapeSize), ("portraitVisibleWidth", OverviewPortraitWidth),
                 ("zoomOutPerMeter", 0.15f)); // +~0.5 on the stairs/mezzanine (3.2 m), up to the max that fits
             SetRefs(overview.GetComponent<AspectLens>(), ("heightSource", overviewTarget));
+            SetRefs(overviewTarget, ("viewCamera", overview)); // look-ahead: two thirds of the frame ahead of the player
 
             var zonesRoot = new GameObject("Camera Zones").transform;
 
