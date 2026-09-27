@@ -6,16 +6,22 @@ namespace Portfolio
     /// <summary>
     /// A trigger volume that hands the view to its own CinemachineCamera while the player is inside.
     /// The CinemachineBrain blends between cameras, so walking into a zone smoothly moves the camera.
+    /// If a <see cref="station"/> is set, the zone only takes over when the player is actually visiting that
+    /// station (clicked it), not when they merely walk past it.
     /// Put zones on the Ignore Raycast layer so they don't swallow clicks on the floor.
     /// </summary>
     [RequireComponent(typeof(BoxCollider))]
     public class CameraZone : MonoBehaviour
     {
         [SerializeField] CinemachineCamera zoneCamera;
-        [Tooltip("Must be higher than the follow camera's priority. When zones overlap, the higher one wins.")]
+        [Tooltip("Must be higher than the overview camera's priority. When zones overlap, the higher one wins.")]
         [SerializeField] int activePriority = 20;
+        [Tooltip("Optional: only activate while the player is heading to / standing at this station.")]
+        [SerializeField] Station station;
 
         int inside;
+        ClickToMove player;
+        bool active;
 
         public CinemachineCamera ZoneCamera => zoneCamera;
 
@@ -29,30 +35,35 @@ namespace Portfolio
 
         void OnTriggerEnter(Collider other)
         {
-            if (!IsPlayer(other)) return;
+            var p = other.GetComponentInParent<ClickToMove>();
+            if (!p) return;
+            player = p;
             inside++;
-            SetActive(true);
         }
 
         void OnTriggerExit(Collider other)
         {
-            if (!IsPlayer(other)) return;
+            if (!other.GetComponentInParent<ClickToMove>()) return;
             inside = Mathf.Max(0, inside - 1);
-            if (inside == 0) SetActive(false);
         }
 
-        static bool IsPlayer(Collider c) => c.GetComponentInParent<ClickToMove>();
-
-        void SetActive(bool active)
+        void Update()
         {
-            if (zoneCamera) zoneCamera.Priority = active ? activePriority : 0;
+            bool want = inside > 0 && (!station || (player && player.Destination == station));
+            if (want != active) SetActive(want);
+        }
+
+        void SetActive(bool value)
+        {
+            active = value;
+            if (zoneCamera) zoneCamera.Priority = value ? activePriority : 0;
         }
 
         void OnDrawGizmos()
         {
             var box = GetComponent<BoxCollider>();
             Gizmos.matrix = transform.localToWorldMatrix;
-            Gizmos.color = new Color(1f, 0.6f, 0.2f, inside > 0 ? 0.35f : 0.12f);
+            Gizmos.color = new Color(1f, 0.6f, 0.2f, active ? 0.35f : 0.12f);
             Gizmos.DrawCube(box.center, box.size);
             Gizmos.color = new Color(1f, 0.6f, 0.2f, 0.9f);
             Gizmos.DrawWireCube(box.center, box.size);

@@ -21,9 +21,15 @@ namespace Portfolio
         [Tooltip("How far off-center the player sits, as a fraction of the screen. 1/6 puts them on the third line.")]
         [SerializeField, Range(0f, 0.4f)] float lookAhead = 1f / 6f;
         [Tooltip("Seconds to swing the look-ahead when the player turns.")]
-        [SerializeField] float lookAheadSmoothing = 0.6f;
+        [SerializeField] float lookAheadSmoothing = 0.9f;
+        [Tooltip("How fast the look-ahead direction follows the walking direction (higher = snappier). Low values ignore the quick turns at path corners.")]
+        [SerializeField] float directionFollow = 1.5f;
+        [Tooltip("Below this speed (m/s) the direction is kept, so stopping or tiny moves don't swing the frame.")]
+        [SerializeField] float minSpeed = 1f;
 
         Vector3 facing = Vector3.forward;
+        Vector3 lastPlayerPos;
+        bool hasLastPos;
         Vector3 offset;
         Vector3 offsetVelocity;
 
@@ -48,9 +54,17 @@ namespace Portfolio
         {
             if (!viewCamera || lookAhead <= 0f) return Vector3.zero;
 
-            // Keep the last facing while standing still, so the space stays in front of the character.
-            var f = Vector3.ProjectOnPlane(player.forward, Vector3.up);
-            if (f.sqrMagnitude > 0.01f) facing = f.normalized;
+            // Follow the smoothed *walking* direction, not the character's instantaneous facing: the agent spins at
+            // every path corner, which would flip the frame from side to side. Standing still keeps the last direction.
+            var pos = player.position;
+            if (hasLastPos && Time.deltaTime > 0f)
+            {
+                var velocity = Vector3.ProjectOnPlane(pos - lastPlayerPos, Vector3.up) / Time.deltaTime;
+                if (velocity.magnitude > minSpeed)
+                    facing = Vector3.Slerp(facing, velocity.normalized, 1f - Mathf.Exp(-directionFollow * Time.deltaTime)).normalized;
+            }
+            lastPlayerPos = pos;
+            hasLastPos = true;
 
             var rot = viewCamera.transform.rotation;
             var right = rot * Vector3.right;

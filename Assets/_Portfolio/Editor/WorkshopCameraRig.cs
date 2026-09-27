@@ -100,6 +100,7 @@ namespace Portfolio.EditorTools
 
                 var zone = NewZone("Zone " + title, zonesRoot, vcam);
                 SetValues(zone, ("activePriority", 25)); // wins over the gallery zone it sits inside
+                SetRefs(zone, ("station", station));     // zoom in only when visiting this station, not when walking past
                 zone.transform.SetPositionAndRotation(station.ApproachPosition, station.transform.rotation);
                 var box = zone.GetComponent<BoxCollider>();
                 box.center = new Vector3(0f, 1.2f, 0.4f);

@@ -23,6 +23,9 @@ namespace Portfolio
 
         NavMeshAgent agent;
         Station pending;
+
+        /// <summary>The station the player is walking to or standing at (null after clicking the floor).</summary>
+        public Station Destination { get; private set; }
         Station hovered;
         Vector3 bodyRest;
         float bobPhase;
@@ -80,12 +83,14 @@ namespace Portfolio
         public void GoTo(Station station)
         {
             pending = station;
+            Destination = station;
             SetDestination(station.ApproachPosition);
         }
 
         public void MoveTo(Vector3 point)
         {
             pending = null;
+            Destination = null;
             SetDestination(point);
         }
 
