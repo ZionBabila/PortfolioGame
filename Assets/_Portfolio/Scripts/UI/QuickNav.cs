@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,7 +26,7 @@ namespace Portfolio
             {
                 var item = Instantiate(itemTemplate, itemTemplate.transform.parent);
                 item.gameObject.SetActive(true);
-                item.GetComponentInChildren<Text>().text = station.data ? station.data.title : station.name;
+                SetLabel(item, station.data ? station.data.title : station.name);
                 var s = station;
                 item.onClick.AddListener(() =>
                 {
@@ -37,5 +38,14 @@ namespace Portfolio
         }
 
         public void Close() => list.SetActive(false);
+
+        // Works before and after Portfolio → Convert Scene Text To TextMeshPro.
+        static void SetLabel(Component item, string text)
+        {
+            var tmp = item.GetComponentInChildren<TMP_Text>(true);
+            if (tmp) { tmp.text = text; return; }
+            var legacy = item.GetComponentInChildren<Text>(true);
+            if (legacy) legacy.text = text;
+        }
     }
 }

@@ -26,7 +26,7 @@ namespace Portfolio.EditorTools
 
         public static bool Build()
         {
-            if (EditorBuildSettings.scenes.Length == 0) PortfolioSceneBuilder.Build();
+            if (EditorBuildSettings.scenes.Length == 0) PortfolioSceneBuilder.BuildWorkshop(confirm: false);
 
             PlayerSettings.productName = "Portfolio";
             PlayerSettings.WebGL.template = "PROJECT:Responsive";

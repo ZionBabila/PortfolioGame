@@ -1,18 +1,18 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Portfolio
 {
     public class LinkButton : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     {
-        [SerializeField] Text label;
+        [SerializeField] TMP_Text label;
         string url;
 
         public void Bind(StationLink link)
         {
             url = link.url;
-            if (label) label.text = link.label + "  ↗";
+            if (label) label.text = link.label + "  →"; // → is in the default TMP font; ↗ isn't
         }
 
         public void OnPointerDown(PointerEventData e)

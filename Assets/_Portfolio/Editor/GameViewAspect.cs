@@ -17,11 +17,13 @@ namespace Portfolio.EditorTools
     {
         const BindingFlags Any = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-        [MenuItem("Portfolio/View/Landscape 16∶9 %&1", priority = 0)]
-        public static void Landscape() => Select(16, 9, "Portfolio 16:9");
+        // Fixed resolutions, not free aspect ratios: the Game view renders at full 1080p and scales down to fit the
+        // window, instead of rendering at the (small) window size and looking blurry.
+        [MenuItem("Portfolio/View/Landscape 16∶9 (1920×1080) %&1", priority = 0)]
+        public static void Landscape() => Select(1920, 1080, "Portfolio 16:9 1080p");
 
-        [MenuItem("Portfolio/View/Portrait 9∶16 %&2", priority = 1)]
-        public static void Portrait() => Select(9, 16, "Portfolio 9:16");
+        [MenuItem("Portfolio/View/Portrait 9∶16 (1080×1920) %&2", priority = 1)]
+        public static void Portrait() => Select(1080, 1920, "Portfolio 9:16 1080p");
 
         [MenuItem("Portfolio/View/Toggle Landscape ⇄ Portrait %&0", priority = 20)]
         public static void Toggle()
@@ -60,16 +62,16 @@ namespace Portfolio.EditorTools
             for (int i = 0; i < total; i++)
             {
                 var s = groupT.GetMethod("GetGameViewSize", Any).Invoke(group, new object[] { i });
-                bool isAspect = sizeType.GetProperty("sizeType", Any).GetValue(s).ToString() == "AspectRatio";
+                bool isFixed = sizeType.GetProperty("sizeType", Any).GetValue(s).ToString() == "FixedResolution";
                 int sw = (int)sizeType.GetProperty("width", Any).GetValue(s);
                 int sh = (int)sizeType.GetProperty("height", Any).GetValue(s);
-                if (isAspect && sw == w && sh == h) { index = i; break; }
+                if (isFixed && sw == w && sh == h) { index = i; break; }
             }
 
             if (index < 0)
             {
-                var aspect = Enum.Parse(sizeKind, "AspectRatio");
-                var size = Activator.CreateInstance(sizeType, aspect, w, h, label);
+                var kind = Enum.Parse(sizeKind, "FixedResolution");
+                var size = Activator.CreateInstance(sizeType, kind, w, h, label);
                 groupT.GetMethod("AddCustomSize", Any).Invoke(group, new[] { size });
                 sizesType.GetMethod("SaveToHDD", Any)?.Invoke(instance, null);
                 index = total;
@@ -79,6 +81,8 @@ namespace Portfolio.EditorTools
             var selected = gv.GetType().GetProperty("selectedSizeIndex", Any);
             if (selected != null && selected.CanWrite) selected.SetValue(gv, index);
             else gv.GetType().GetMethod("SizeSelectionCallback", Any)?.Invoke(gv, new object[] { index, null });
+            // Full-resolution rendering even when a free aspect ratio is picked by hand.
+            gv.GetType().GetProperty("lowResolutionForAspectRatios", Any)?.SetValue(gv, false);
             gv.Repaint();
         }
 

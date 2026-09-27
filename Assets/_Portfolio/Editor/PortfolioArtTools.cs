@@ -58,16 +58,26 @@ namespace Portfolio.EditorTools
         {
             EnsureFolder(ConvertedDir);
             var path = $"{ConvertedDir}/{Sanitize(src.name)}_Toon.mat";
-            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
-            if (mat) return mat;
-
             var color = src.HasProperty("_BaseColor") ? src.GetColor("_BaseColor")
                       : src.HasProperty("_Color") ? src.GetColor("_Color") : Color.white;
             var tex = src.HasProperty("_BaseMap") ? src.GetTexture("_BaseMap")
                     : src.HasProperty("_MainTex") ? src.GetTexture("_MainTex") : null;
 
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat)
+            {
+                // Existing toon materials keep your tweaks; only pick up a texture added in Blender since.
+                if (tex && !mat.GetTexture("_BaseMap"))
+                {
+                    mat.SetTexture("_BaseMap", tex);
+                    mat.SetColor("_BaseColor", Color.white);
+                    EditorUtility.SetDirty(mat);
+                }
+                return mat;
+            }
+
             mat = new Material(shader);
-            mat.SetColor("_BaseColor", color);
+            mat.SetColor("_BaseColor", tex ? Color.white : color); // a texture carries the color itself
             mat.SetColor("_ShadeColor", Color.Lerp(Color.white, new Color(0.35f, 0.3f, 0.5f), 0.55f));
             if (tex) mat.SetTexture("_BaseMap", tex);
             mat.SetColor("_OutlineColor", Ink);
@@ -96,7 +106,7 @@ namespace Portfolio.EditorTools
                 bool first = true;
                 foreach (var r in renderers)
                 {
-                    if (r is not MeshRenderer || r.GetComponent<TextMesh>()) continue;
+                    if (r is not MeshRenderer || r.GetComponent<TMPro.TMP_Text>()) continue; // skip the label
                     if (first) { bounds = r.bounds; first = false; }
                     else bounds.Encapsulate(r.bounds);
                 }

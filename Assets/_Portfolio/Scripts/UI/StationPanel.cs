@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,10 +13,10 @@ namespace Portfolio
     {
         [SerializeField] RectTransform sheet;
         [SerializeField] CanvasGroup group;
-        [SerializeField] Text kindLabel;
-        [SerializeField] Text title;
-        [SerializeField] Text subtitle;
-        [SerializeField] Text body;
+        [SerializeField] TMP_Text kindLabel;
+        [SerializeField] TMP_Text title;
+        [SerializeField] TMP_Text subtitle;
+        [SerializeField] TMP_Text body;
         [SerializeField] Image accentBar;
         [SerializeField] Image picture;
         [SerializeField] RectTransform linksRoot;
@@ -46,13 +47,14 @@ namespace Portfolio
         public void Show(StationData data)
         {
             if (!data) return;
-            kindLabel.text = data.kind.ToString().ToUpperInvariant();
-            title.text = data.title;
-            subtitle.text = data.subtitle;
-            subtitle.gameObject.SetActive(!string.IsNullOrEmpty(data.subtitle));
-            body.text = data.body;
-            accentBar.color = data.accent;
-            kindLabel.color = data.accent;
+            // Null-safe: a text field left empty (e.g. before converting the scene to TextMeshPro) just stays blank.
+            SetText(kindLabel, data.kind.ToString().ToUpperInvariant());
+            SetText(title, data.title);
+            SetText(subtitle, data.subtitle);
+            if (subtitle) subtitle.gameObject.SetActive(!string.IsNullOrEmpty(data.subtitle));
+            SetText(body, data.body);
+            if (accentBar) accentBar.color = data.accent;
+            if (kindLabel) kindLabel.color = data.accent;
 
             picture.sprite = data.image;
             picture.gameObject.SetActive(data.image);
@@ -72,6 +74,11 @@ namespace Portfolio
             if (scroll) scroll.verticalNormalizedPosition = 1f;
             open = true;
             group.blocksRaycasts = true;
+        }
+
+        static void SetText(TMP_Text t, string value)
+        {
+            if (t) t.text = value;
         }
 
         public void Hide()

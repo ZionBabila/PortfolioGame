@@ -9,11 +9,14 @@ namespace Portfolio
     /// the same amount of the room across, whatever their exact ratio). Also shifts the composer's
     /// screen position so the subject isn't hidden under the station panel (right side in landscape,
     /// bottom sheet in portrait).
+    /// Runs in Play mode only: in the Editor the CinemachineCamera's lens is yours to edit.
     /// </summary>
     [RequireComponent(typeof(CinemachineCamera))]
-    [ExecuteAlways]
     public class AspectLens : MonoBehaviour
     {
+        [Tooltip("Off: leave the lens and composer exactly as set on the CinemachineCamera.")]
+        [SerializeField] bool controlLens = true;
+
         [Header("Landscape (16:9)")]
         [SerializeField] float landscapeSize = 4.2f;
         [SerializeField] Vector2 landscapeScreenPosition;
@@ -46,6 +49,7 @@ namespace Portfolio
 
         void Apply()
         {
+            if (!controlLens) return;
             float ratio = Aspect.Ratio;
             float height = heightSource ? heightSource.PlayerHeight : 0f;
             if (Mathf.Approximately(ratio, lastRatio) && Mathf.Abs(height - lastHeight) < 0.01f) return;

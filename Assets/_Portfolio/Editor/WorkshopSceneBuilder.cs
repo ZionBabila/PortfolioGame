@@ -4,20 +4,24 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Portfolio.EditorTools
 {
     /// <summary>
-    /// Builds the Workshop scene around the model exported from Art/Blender/build_workshop.py.
+    /// Workshop scene tooling. The scene is yours to edit by hand; two entry points:
+    ///  * Portfolio → Sync Workshop From Blender (safe, use this): after re-exporting Workshop.fbx, gives new meshes
+    ///    toon materials + colliders, turns new ST_&lt;Name&gt; empties into Stations and re-bakes the NavMesh.
+    ///    Nothing you changed in the scene is touched.
+    ///  * Portfolio → Advanced → Rebuild Workshop Scene From Scratch: regenerates the whole scene (overwrites it).
     /// Every empty named ST_&lt;Name&gt; becomes a clickable Station; ST_&lt;Name&gt;_Approach is where the player stops.
-    /// Re-run after re-exporting from Blender. Station content (.asset files) is never touched.
     /// </summary>
     public static partial class PortfolioSceneBuilder
     {
         const string WorkshopScenePath = Root + "/Scenes/Workshop.unity";
-        const string WorkshopModelPath = Root + "/Art/Models/Workshop.fbx";
+        const string WorkshopModelPath = Root + "/Art/Models/Workshop.blend"; // Unity imports it directly (runs Blender in the background)
 
         static readonly Dictionary<string, string> StationFiles = new()
         {
@@ -28,7 +32,7 @@ namespace Portfolio.EditorTools
             ["Contact"] = "05_Links",
         };
 
-        [MenuItem("Portfolio/Build Workshop Scene")]
+        [MenuItem("Portfolio/Advanced/Rebuild Workshop Scene From Scratch (overwrites scene)")]
         public static void BuildWorkshop() => BuildWorkshop(confirm: true);
 
         public static void BuildWorkshop(bool confirm)
@@ -57,13 +61,7 @@ namespace Portfolio.EditorTools
             ApplyToonAndColliders(workshop);
             var stations = SetupStations(workshop);
 
-            var surface = workshop.AddComponent<NavMeshSurface>();
-            surface.collectObjects = CollectObjects.Children;
-            surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-            surface.BuildNavMesh();
-            var navPath = Root + "/Scenes/Workshop_NavMesh.asset";
-            AssetDatabase.DeleteAsset(navPath);
-            AssetDatabase.CreateAsset(surface.navMeshData, navPath);
+            BakeWorkshopNavMesh(workshop);
 
             // Look toward the back-left corner (the two walls), whatever axis convention the export used.
             var about = stations.First(s => s.name == "ST_About").transform.position;
@@ -81,7 +79,7 @@ namespace Portfolio.EditorTools
             sun.shadowNormalBias = 0.8f;
             sun.intensity = 1.35f;
             RenderSettings.ambientLight = new Color(0.62f, 0.6f, 0.66f);
-            ConfigureShadows();
+            ConfigureRendering();
 
             var mats = new Dictionary<string, Material>
             {
@@ -109,7 +107,7 @@ namespace Portfolio.EditorTools
                 ToonMat("Marker", new Color(1f, 0.95f, 0.5f), 0f));
             Object.DestroyImmediate(marker.GetComponent<Collider>());
 
-            var cam = BuildCamera(player.transform);
+            var cam = BuildCamera();
             cam.backgroundColor = new Color(0.86f, 0.83f, 0.78f);
             var floor = workshop.GetComponentsInChildren<Renderer>().First(r => r.name == "Floor").bounds;
             var walls = workshop.GetComponentsInChildren<Renderer>().First(r => r.name == "Walls").bounds;
@@ -139,21 +137,75 @@ namespace Portfolio.EditorTools
             var shader = Shader.Find("Portfolio/ToonOutline");
             foreach (var r in workshop.GetComponentsInChildren<MeshRenderer>(true))
             {
+                // Only the model's meshes: station labels (TextMesh / TextMeshPro) also have a MeshRenderer,
+                // but their font material must stay as it is, and they have no mesh to collide with.
+                var mf = r.GetComponent<MeshFilter>();
+                if (!mf || !mf.sharedMesh || r.GetComponent<TextMesh>() || r.GetComponent<TMP_Text>()) continue;
+
                 bool smooth = PortfolioArtTools.HasSmoothedNormals(r);
-                var mats = r.sharedMaterials;
-                for (int i = 0; i < mats.Length; i++)
+                // Derive each slot from the imported material *by name*, not from the current override by index:
+                // the importer may reorder a mesh's materials when you add or change slots in Blender.
+                var source = PrefabUtility.GetCorrespondingObjectFromSource(r);
+                var imported = source ? source.sharedMaterials : r.sharedMaterials;
+                var mats = new Material[imported.Length];
+                for (int i = 0; i < imported.Length; i++)
                 {
-                    if (!mats[i] || mats[i].shader == shader) continue;
-                    mats[i] = mats[i].name == "M_Glass"
-                        ? GlassMaterial()
-                        : PortfolioArtTools.ToonFor(mats[i], shader, smooth, OutlineWidthFor(mats[i].name));
+                    var m = imported[i];
+                    if (!m || m.shader == shader || m.shader.name == "Portfolio/ToonGlass") mats[i] = m;
+                    else if (m.name == "M_Glass") mats[i] = GlassMaterial();
+                    else mats[i] = PortfolioArtTools.ToonFor(m, shader, smooth, OutlineWidthFor(m.name));
                 }
-                r.sharedMaterials = mats;
+                if (!r.sharedMaterials.SequenceEqual(mats)) r.sharedMaterials = mats;
 
                 if (r.name == "FloorApron") continue; // visual only: the camera may show it, the player may not walk on it
+                if (r.GetComponent<Collider>()) continue; // keep colliders you added or tuned by hand
                 var mc = r.gameObject.AddComponent<MeshCollider>();
-                mc.sharedMesh = r.GetComponent<MeshFilter>().sharedMesh;
+                mc.sharedMesh = mf.sharedMesh;
             }
+        }
+
+        /// <summary>
+        /// Safe update after re-exporting Workshop.fbx from Blender: only adds what's missing
+        /// (toon materials on new meshes, colliders, new stations) and re-bakes the NavMesh.
+        /// </summary>
+        [MenuItem("Portfolio/Sync Workshop From Blender")]
+        public static void SyncWorkshop()
+        {
+            var workshop = GameObject.Find("Workshop");
+            if (!workshop || !PrefabUtility.IsPartOfPrefabInstance(workshop))
+            {
+                EditorUtility.DisplayDialog("Sync Workshop", "Open the Workshop scene first (no \"Workshop\" model instance found).", "OK");
+                return;
+            }
+            Undo.RegisterFullObjectHierarchyUndo(workshop, "Sync Workshop From Blender");
+            int before = workshop.GetComponentsInChildren<Station>(true).Length;
+
+            ApplyToonAndColliders(workshop);
+            var stations = SetupStations(workshop);
+            BakeWorkshopNavMesh(workshop);
+
+            EditorSceneManager.MarkSceneDirty(workshop.scene);
+            int added = stations.Count - before;
+            Debug.Log($"[Portfolio] Workshop synced: {stations.Count} stations ({added} new), NavMesh re-baked." +
+                      (added > 0 ? " New stations have no camera zone yet: Portfolio → Camera → Add Camera Zone." : ""));
+        }
+
+        static void BakeWorkshopNavMesh(GameObject workshop)
+        {
+            var surface = workshop.GetComponent<NavMeshSurface>();
+            if (!surface)
+            {
+                surface = workshop.AddComponent<NavMeshSurface>();
+                surface.collectObjects = CollectObjects.Children;
+                surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+            }
+            // Re-bake into the same asset the surface already uses (e.g. one baked from its Inspector).
+            var existing = surface.navMeshData ? AssetDatabase.GetAssetPath(surface.navMeshData) : null;
+            surface.BuildNavMesh();
+            var navPath = string.IsNullOrEmpty(existing) ? Root + "/Scenes/Workshop_NavMesh.asset" : existing;
+            AssetDatabase.DeleteAsset(navPath);
+            AssetDatabase.CreateAsset(surface.navMeshData, navPath);
+            EditorUtility.SetDirty(surface);
         }
 
         static Material GlassMaterial()
@@ -166,13 +218,19 @@ namespace Portfolio.EditorTools
             return mat;
         }
 
-        /// <summary>The window grid shadows need a sharper shadow map than the URP template ships with (Web uses the Mobile asset).</summary>
-        static void ConfigureShadows()
+        /// <summary>
+        /// Render quality for both URP assets (the Web build uses "Mobile"): full resolution, 4x MSAA, and a shadow
+        /// map sharp enough for the window-grid shadows. Also available as Portfolio → Apply Render Quality.
+        /// </summary>
+        [MenuItem("Portfolio/Apply Render Quality")]
+        public static void ConfigureRendering()
         {
             foreach (var guid in AssetDatabase.FindAssets("t:UniversalRenderPipelineAsset", new[] { "Assets/Settings" }))
             {
                 var asset = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(guid));
                 var so = new SerializedObject(asset);
+                so.FindProperty("m_RenderScale").floatValue = 1f;    // template Mobile asset renders at 0.8 and upscales
+                so.FindProperty("m_MSAA").intValue = 4;              // smooth edges on the outlines
                 so.FindProperty("m_ShadowDistance").floatValue = 45f;
                 so.FindProperty("m_MainLightShadowmapResolution").intValue = 2048;
                 so.FindProperty("m_ShadowCascadeCount").intValue = 1;
@@ -195,7 +253,6 @@ namespace Portfolio.EditorTools
             // Labels must stay below the wall tops: the camera never shows anything above them.
             var wallsRenderer = workshop.GetComponentsInChildren<Renderer>().First(r => r.name == "Walls");
             float labelCeiling = wallsRenderer.bounds.max.y - 0.9f;
-            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             var roots = workshop.GetComponentsInChildren<Transform>(true)
                 .Where(t => t.name.StartsWith("ST_") && !t.name.EndsWith("_Approach"))
                 .ToList();
@@ -203,6 +260,9 @@ namespace Portfolio.EditorTools
             var stations = new List<Station>();
             foreach (var t in roots)
             {
+                var existing = t.GetComponent<Station>();
+                if (existing) { stations.Add(existing); continue; } // already set up (and maybe hand-tuned)
+
                 var key = t.name.Substring(3);
                 StationData data = null;
                 if (StationFiles.TryGetValue(key, out var file))
@@ -220,7 +280,7 @@ namespace Portfolio.EditorTools
                 var size = t.InverseTransformVector(bounds.size);
                 box.size = new Vector3(Mathf.Abs(size.x), Mathf.Abs(size.y), Mathf.Abs(size.z));
 
-                var label = new GameObject("Label").AddComponent<TextMesh>();
+                var label = new GameObject("Label").AddComponent<TextMeshPro>();
                 label.transform.SetParent(t, false);
                 var labelPos = new Vector3(bounds.center.x, bounds.max.y + 0.6f, bounds.center.z);
                 var approachPoint = t.Find(t.name + "_Approach");
@@ -232,13 +292,12 @@ namespace Portfolio.EditorTools
                     labelPos.y = labelCeiling;
                 }
                 label.transform.position = labelPos;
-                label.font = font;
-                label.GetComponent<MeshRenderer>().sharedMaterial = font.material;
-                label.fontSize = 64;
-                label.characterSize = 0.08f;
-                label.fontStyle = FontStyle.Bold;
-                label.anchor = TextAnchor.MiddleCenter;
-                label.alignment = TextAlignment.Center;
+                if (TMP_Settings.defaultFontAsset) label.font = TMP_Settings.defaultFontAsset;
+                label.rectTransform.sizeDelta = new Vector2(8f, 1.5f);
+                label.fontSize = 5f;
+                label.fontStyle = FontStyles.Bold;
+                label.alignment = TextAlignmentOptions.Center;
+                label.textWrappingMode = TextWrappingModes.NoWrap;
                 label.color = Ink;
                 label.text = data ? data.title : key;
 

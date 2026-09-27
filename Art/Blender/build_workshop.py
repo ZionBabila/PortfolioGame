@@ -1,4 +1,10 @@
 """
+!! This REBUILDS the "Workshop" collection from code and erases manual edits to it.       !!
+!! It was used to generate the first version; you normally don't need it anymore.         !!
+
+The working file is Assets/_Portfolio/Art/Models/Workshop.blend. Unity imports it directly
+(it runs Blender in the background), so just save in Blender and switch to Unity.
+
 Generates the portfolio workshop: an industrial-design loft with steel-framed (Belgian profile)
 grid windows, a mezzanine, and warm wood furniture.
 
@@ -537,27 +543,6 @@ def build():
     build_contact(root)
     build_props(root)
     return root
-
-
-def export_fbx(path):
-    col = bpy.data.collections[COLLECTION]
-    bpy.ops.object.select_all(action="DESELECT")
-    for obj in col.all_objects:
-        obj.select_set(True)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    bpy.ops.export_scene.fbx(
-        filepath=path,
-        use_selection=True,
-        object_types={"EMPTY", "MESH"},
-        apply_scale_options="FBX_SCALE_ALL",
-        axis_forward="-Z",
-        axis_up="Y",
-        bake_space_transform=False,  # "Apply Transform" corrupts empties; Unity bakes the axis conversion instead
-        mesh_smooth_type="FACE",
-        add_leaf_bones=False,
-        use_mesh_modifiers=True,
-    )
-    bpy.ops.object.select_all(action="DESELECT")
 
 
 if __name__ == "__main__":

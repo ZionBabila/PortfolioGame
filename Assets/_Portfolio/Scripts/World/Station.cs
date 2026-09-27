@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace Portfolio
@@ -9,7 +10,7 @@ namespace Portfolio
         public StationData data;
         public Transform approachPoint;
         [SerializeField] Transform visual;
-        [SerializeField] TextMesh label;
+        [SerializeField] TMP_Text label;
         [SerializeField] float hoverScale = 1.08f;
 
         Vector3 baseScale;

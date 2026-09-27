@@ -19,6 +19,11 @@ namespace Portfolio
     [DisallowMultipleComponent]
     public class CinemachineRoomConfiner : CinemachineExtension
     {
+        [Tooltip("Cap the lens size to the widest view that fits inside the walls. Off: the zoom is exactly what the lens says.")]
+        public bool LimitZoom = true;
+        [Tooltip("Pull the camera back inside when its view would show past the walls. Off: the camera goes wherever its body puts it.")]
+        public bool KeepInsideWalls = true;
+
         [Tooltip("Walkable room rectangle (x, z). The back walls stand on its far edges.")]
         public Vector2 RoomMin;
         public Vector2 RoomMax;
@@ -48,8 +53,13 @@ namespace Portfolio
             if (!Mathf.Approximately(aspect, cachedAspect) || Quaternion.Angle(rot, cachedRotation) > 0.01f)
                 UpdateAnchor(rot, aspect);
 
-            float size = Mathf.Min(state.Lens.OrthographicSize, maxSize * PanRoom);
-            state.Lens.OrthographicSize = size;
+            float size = state.Lens.OrthographicSize;
+            if (LimitZoom)
+            {
+                size = Mathf.Min(size, maxSize * PanRoom);
+                state.Lens.OrthographicSize = size;
+            }
+            if (!KeepInsideWalls) return;
 
             var fwd = rot * Vector3.forward;
             var anchorPos = anchorFocus - fwd * ProbeDistance;
