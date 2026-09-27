@@ -25,9 +25,7 @@ namespace Portfolio.EditorTools
             }
             // The build only lives on this computer (Builds/WebGL). Ask what to do with it next.
             switch (EditorUtility.DisplayDialogComplex("Build finished",
-                        "The build is ready in Builds/WebGL (on this computer only).
-
-Upload it to the website, or test it in your browser first?",
+                        "The build is ready in Builds/WebGL (on this computer only).\n\nUpload it to the website, or test it in your browser first?",
                         "Upload to website", "Close", "Test in browser"))
             {
                 case 0: PortfolioPublish.UploadAfterBuild(); break;
