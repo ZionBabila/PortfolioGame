@@ -5956,7 +5956,7 @@ PrefabInstance:
     - target: {fileID: 3668820428746036534, guid: b7af2156ccb26e440b330bb60c91c6d3, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 894066a584f7b10468b2e29261042f2e, type: 2}
+      objectReference: {fileID: 2100000, guid: 814941111c995c74daf8b8bed973363e, type: 2}
     - target: {fileID: 3668820428746036534, guid: b7af2156ccb26e440b330bb60c91c6d3, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -6357,7 +6357,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.1
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 980a67424d3bdec4e9fe8b27a182ad96, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: e21a7440a5294f84bbc9e824be59d510, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &1832976716
 GameObject:
