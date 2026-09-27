@@ -81,8 +81,10 @@ namespace Portfolio.EditorTools
                 SetValues(zone, ("activePriority", 20));
                 zone.transform.position = new Vector3(gb.center.x, floor.max.y, gb.center.z);
                 var box = zone.GetComponent<BoxCollider>();
-                box.center = new Vector3(0f, 3f, 0f);
-                box.size = new Vector3(gb.size.x, 6f, gb.size.z);
+                // Pulled 0.6 m in from the room-facing sides, so the player standing nearby (or spawning in the
+                // middle of the room) doesn't graze it and flip the camera to the gallery view.
+                box.center = new Vector3(-0.3f, 3f, -0.3f);
+                box.size = new Vector3(gb.size.x - 0.6f, 6f, gb.size.z - 0.6f);
             }
 
             foreach (var station in stations)
