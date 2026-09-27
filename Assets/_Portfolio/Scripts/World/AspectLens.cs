@@ -23,9 +23,16 @@ namespace Portfolio
         [SerializeField] float portraitVisibleWidth = 6.5f;
         [SerializeField] Vector2 portraitScreenPosition;
 
+        [Header("Height")]
+        [Tooltip("Optional: zoom out as the player climbs (stairs, mezzanine).")]
+        [SerializeField] OverviewTarget heightSource;
+        [Tooltip("Extra orthographic size per meter the player is above the floor.")]
+        [SerializeField] float zoomOutPerMeter = 0.35f;
+
         CinemachineCamera vcam;
         CinemachinePositionComposer composer;
         float lastRatio = -1f;
+        float lastHeight = -1f;
 
         void OnEnable()
         {
@@ -40,12 +47,14 @@ namespace Portfolio
         void Apply()
         {
             float ratio = Aspect.Ratio;
-            if (Mathf.Approximately(ratio, lastRatio)) return;
+            float height = heightSource ? heightSource.PlayerHeight : 0f;
+            if (Mathf.Approximately(ratio, lastRatio) && Mathf.Abs(height - lastHeight) < 0.01f) return;
             lastRatio = ratio;
+            lastHeight = height;
 
             bool portrait = ratio < 1f;
             var lens = vcam.Lens;
-            lens.OrthographicSize = portrait ? portraitVisibleWidth / (2f * ratio) : landscapeSize;
+            lens.OrthographicSize = (portrait ? portraitVisibleWidth / (2f * ratio) : landscapeSize) + height * zoomOutPerMeter;
             vcam.Lens = lens;
 
             if (composer)

@@ -7,7 +7,8 @@ namespace Portfolio.EditorTools
 {
     /// <summary>
     /// Cinemachine setup for the Workshop:
-    ///  * "CM Follow" follows the player; CinemachineRoomConfiner keeps the view inside the walls;
+    ///  * "CM Overview" shows as much of the room as fits, rising and zooming out as the player climbs;
+    ///    CinemachineRoomConfiner keeps every view inside the walls;
     ///  * one CameraZone per station: when the player walks up to it, the brain blends to a closer shot;
     ///  * Portfolio → Camera → Add Camera Zone creates extra zones to place by hand.
     /// </summary>
@@ -15,6 +16,11 @@ namespace Portfolio.EditorTools
     {
         const int FollowPriority = 10;
         const float CameraDistance = 30f;
+        // Overview framing before the confiner caps it to the widest view inside the walls.
+        const float OverviewLandscapeSize = 4.8f; // max that fits at 16:9 is ~5.3 (18.8 m across)
+        const float OverviewPortraitWidth = 6.8f; // max at 9:16 is ~8.3 m across
+        // How far the gallery camera turns from the main angle to face the mezzanine wall.
+        const float GalleryYawOffset = 45f;
 
         struct RoomLimits
         {
@@ -38,20 +44,51 @@ namespace Portfolio.EditorTools
             };
             var rigRoot = new GameObject("Cameras").transform;
 
-            var follow = NewVcam("CM Follow", rigRoot, viewRotation, player, FollowPriority);
-            var followComposer = follow.GetComponent<CinemachinePositionComposer>();
-            followComposer.Damping = new Vector3(0.6f, 0.6f, 0.6f);
-            var comp = followComposer.Composition;
-            comp.DeadZone.Enabled = true;
-            comp.DeadZone.Size = new Vector2(0.15f, 0.15f);
-            followComposer.Composition = comp;
-            SetValues(follow.GetComponent<AspectLens>(), ("landscapeSize", 4.2f), ("portraitVisibleWidth", 6.5f));
+            // Overview: as much of the room as fits inside the walls, drifting a little toward the player and
+            // rising (and zooming out) as the player climbs. Zones zoom in from here.
+            var overviewTarget = new GameObject("Overview Target").AddComponent<OverviewTarget>();
+            overviewTarget.transform.SetParent(rigRoot, false);
+            var roomCenter = new Vector3(floor.center.x, floor.max.y, floor.center.z);
+            overviewTarget.transform.position = roomCenter;
+            SetRefs(overviewTarget, ("player", player));
+            SetValues(overviewTarget, ("roomCenter", roomCenter));
+
+            var overview = NewVcam("CM Overview", rigRoot, viewRotation, overviewTarget.transform, FollowPriority);
+            overview.GetComponent<CinemachinePositionComposer>().Damping = new Vector3(1f, 1f, 1f);
+            overview.GetComponent<CinemachineRoomConfiner>().PanRoom = 1f; // use the widest view that fits
+            SetValues(overview.GetComponent<AspectLens>(),
+                ("landscapeSize", OverviewLandscapeSize), ("portraitVisibleWidth", OverviewPortraitWidth),
+                ("zoomOutPerMeter", 0.15f)); // +~0.5 on the stairs/mezzanine (3.2 m), up to the max that fits
+            SetRefs(overview.GetComponent<AspectLens>(), ("heightSource", overviewTarget));
 
             var zonesRoot = new GameObject("Camera Zones").transform;
+
+            // The mezzanine runs along the side wall, which the main angle sees edge-on. On the stairs and up
+            // there, turn to face that wall so the whole gallery (and its station) reads clearly.
+            var galleryRotation = Quaternion.Euler(40f, viewRotation.eulerAngles.y - GalleryYawOffset, 0f);
+            var mezzanine = GameObject.Find("Mezzanine");
+            if (mezzanine)
+            {
+                var gb = mezzanine.GetComponent<Renderer>().bounds;
+                var galleryTarget = new GameObject("Gallery Target").transform;
+                galleryTarget.SetParent(rigRoot, false);
+                galleryTarget.position = new Vector3(gb.center.x, gb.max.y - 1.2f, gb.center.z);
+                var galleryCam = NewVcam("CM Gallery", rigRoot, galleryRotation, galleryTarget, 0);
+                SetValues(galleryCam.GetComponent<AspectLens>(), ("landscapeSize", 4.6f), ("portraitVisibleWidth", 7.5f));
+
+                var zone = NewZone("Zone Gallery", zonesRoot, galleryCam);
+                SetValues(zone, ("activePriority", 20));
+                zone.transform.position = new Vector3(gb.center.x, floor.max.y, gb.center.z);
+                var box = zone.GetComponent<BoxCollider>();
+                box.center = new Vector3(0f, 3f, 0f);
+                box.size = new Vector3(gb.size.x, 6f, gb.size.z);
+            }
+
             foreach (var station in stations)
             {
                 var title = station.data ? station.data.title : station.name;
-                var vcam = NewVcam("CM Zone " + title, rigRoot, viewRotation, station.transform, 0);
+                bool upstairs = station.ApproachPosition.y > floor.max.y + 1f;
+                var vcam = NewVcam("CM Zone " + title, rigRoot, upstairs ? galleryRotation : viewRotation, station.transform, 0);
                 vcam.GetComponent<CinemachinePositionComposer>().TargetOffset = new Vector3(0f, 0.8f, 0f);
                 // Keep the station clear of the content panel: it docks right in landscape, bottom (58%) in portrait.
                 SetValues(vcam.GetComponent<AspectLens>(),
@@ -59,6 +96,7 @@ namespace Portfolio.EditorTools
                     ("portraitVisibleWidth", 5f), ("portraitScreenPosition", new Vector2(0f, -0.27f))); // +Y is down in CM3
 
                 var zone = NewZone("Zone " + title, zonesRoot, vcam);
+                SetValues(zone, ("activePriority", 25)); // wins over the gallery zone it sits inside
                 zone.transform.SetPositionAndRotation(station.ApproachPosition, station.transform.rotation);
                 var box = zone.GetComponent<BoxCollider>();
                 box.center = new Vector3(0f, 1.2f, 0.4f);
@@ -117,11 +155,11 @@ namespace Portfolio.EditorTools
         [MenuItem("Portfolio/Camera/Add Camera Zone")]
         static void AddCameraZone()
         {
-            var followGo = GameObject.Find("CM Follow");
+            var followGo = GameObject.Find("CM Overview");
             var followConfiner = followGo ? followGo.GetComponent<CinemachineRoomConfiner>() : null;
             if (!followConfiner)
             {
-                EditorUtility.DisplayDialog("Add Camera Zone", "Open the Workshop scene first (no \"CM Follow\" camera found).", "OK");
+                EditorUtility.DisplayDialog("Add Camera Zone", "Open the Workshop scene first (no \"CM Overview\" camera found).", "OK");
                 return;
             }
             roomLimits = new RoomLimits

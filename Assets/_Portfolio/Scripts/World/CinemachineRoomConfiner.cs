@@ -120,19 +120,20 @@ namespace Portfolio
                 if (p.x >= ViewFloorMin.x + m && p.x <= ViewFloorMax.x - m && p.z >= ViewFloorMin.y + m && p.z <= ViewFloorMax.y - m)
                     return true;
             }
+            // The back walls run the full length of the visible floor (they continue past the cutaway).
             if (Mathf.Abs(d.x) > 1e-5f)
             {
                 float wallX = d.x > 0 ? RoomMax.x : RoomMin.x;
                 float t = (wallX - o.x) / d.x;
                 var p = o + d * t;
-                if (t > 0 && p.y >= FloorY && p.y <= FloorY + WallHeight - m && p.z >= RoomMin.y && p.z <= RoomMax.y) return true;
+                if (t > 0 && p.y >= FloorY && p.y <= FloorY + WallHeight - m && p.z >= ViewFloorMin.y && p.z <= ViewFloorMax.y) return true;
             }
             if (Mathf.Abs(d.z) > 1e-5f)
             {
                 float wallZ = d.z > 0 ? RoomMax.y : RoomMin.y;
                 float t = (wallZ - o.z) / d.z;
                 var p = o + d * t;
-                if (t > 0 && p.y >= FloorY && p.y <= FloorY + WallHeight - m && p.x >= RoomMin.x && p.x <= RoomMax.x) return true;
+                if (t > 0 && p.y >= FloorY && p.y <= FloorY + WallHeight - m && p.x >= ViewFloorMin.x && p.x <= ViewFloorMax.x) return true;
             }
             return false;
         }

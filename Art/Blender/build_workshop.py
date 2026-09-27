@@ -232,8 +232,10 @@ def build_shell(root):
     left_holes = [(3.3, 0.9, 3.0, 3.8), (-3.3, 3.9, 3.4, 1.6)]
 
     walls = MeshBuilder("Walls")
-    wall_with_holes(walls, "x", 7.15, -9.3, 9.0, 6.0, 0.3, back_holes)
-    wall_with_holes(walls, "y", -9.15, -7.0, 7.3, 6.0, 0.3, left_holes)
+    # Both back walls run on past the room, along the apron, as if the building continues beyond the
+    # cutaway. That lets the camera pull back to a wide view without ever showing the void.
+    wall_with_holes(walls, "x", 7.15, -9.3, 12.5, 6.0, 0.3, back_holes)
+    wall_with_holes(walls, "y", -9.15, -10.5, 7.3, 6.0, 0.3, left_holes)
     # radiators under the back windows
     for uc, _, w, _ in back_holes:
         walls.box((uc, 6.9, 0.45), (1.6, 0.12, 0.55), "CabinetWhite")

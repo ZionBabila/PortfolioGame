@@ -192,6 +192,9 @@ namespace Portfolio.EditorTools
 
         static List<Station> SetupStations(GameObject workshop)
         {
+            // Labels must stay below the wall tops: the camera never shows anything above them.
+            var wallsRenderer = workshop.GetComponentsInChildren<Renderer>().First(r => r.name == "Walls");
+            float labelCeiling = wallsRenderer.bounds.max.y - 0.9f;
             var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             var roots = workshop.GetComponentsInChildren<Transform>(true)
                 .Where(t => t.name.StartsWith("ST_") && !t.name.EndsWith("_Approach"))
@@ -219,7 +222,16 @@ namespace Portfolio.EditorTools
 
                 var label = new GameObject("Label").AddComponent<TextMesh>();
                 label.transform.SetParent(t, false);
-                label.transform.position = new Vector3(bounds.center.x, bounds.max.y + 0.6f, bounds.center.z);
+                var labelPos = new Vector3(bounds.center.x, bounds.max.y + 0.6f, bounds.center.z);
+                var approachPoint = t.Find(t.name + "_Approach");
+                if (labelPos.y > labelCeiling && approachPoint)
+                {
+                    // Too tall (e.g. the shelf on the mezzanine): hang the label in front of the station instead.
+                    var front = Vector3.ProjectOnPlane(approachPoint.position - bounds.center, Vector3.up).normalized;
+                    labelPos = bounds.center + front * (bounds.extents.magnitude * 0.5f);
+                    labelPos.y = labelCeiling;
+                }
+                label.transform.position = labelPos;
                 label.font = font;
                 label.GetComponent<MeshRenderer>().sharedMaterial = font.material;
                 label.fontSize = 64;

@@ -35,6 +35,9 @@ namespace Portfolio.EditorTools
             PlayerSettings.WebGL.decompressionFallback = true;
             PlayerSettings.WebGL.dataCaching = true;
             PlayerSettings.runInBackground = false;
+            // No "Made with Unity" intro: straight into the workshop (allowed on Personal since Unity 6).
+            PlayerSettings.SplashScreen.show = false;
+            PlayerSettings.SplashScreen.showUnityLogo = false;
 
             if (Directory.Exists(OutputDir)) Directory.Delete(OutputDir, true);
 
