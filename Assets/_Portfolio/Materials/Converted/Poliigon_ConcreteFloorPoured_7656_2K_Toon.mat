@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Poliigon_PlasterPainted_7664_1K_Toon
+  m_Name: Poliigon_ConcreteFloorPoured_7656_2K_Toon
   m_Shader: {fileID: 4800000, guid: b241e07a5462d9f4b96ce329476dcc85, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 46efb1308ab1fd048a7b1dd8b30b230a, type: 3}
+        m_Texture: {fileID: 2800000, guid: adfd58d5e96b82a45ae51625e16aa238, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []

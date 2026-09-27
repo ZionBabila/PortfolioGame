@@ -42,16 +42,27 @@ namespace Portfolio.EditorTools
         void OnPreprocessMaterialDescription(MaterialDescription description, Material material, AnimationClip[] clips)
         {
             if (!InScope) return;
-            if (!description.TryGetProperty("DiffuseColor", out TexturePropertyDescription tex)) return;
-            if (tex.texture) { material.SetTexture("_BaseMap", tex.texture); return; }
-
-            // The path arrives mangled (e.g. "C//Users/..."), so only trust the file name.
-            var raw = !string.IsNullOrEmpty(tex.relativePath) ? tex.relativePath : tex.path;
-            var file = Path.GetFileNameWithoutExtension((raw ?? "").Replace('\\', '/'));
+            string file = null, preferFolder = null;
+            if (description.TryGetProperty("DiffuseColor", out TexturePropertyDescription tex))
+            {
+                if (tex.texture) { material.SetTexture("_BaseMap", tex.texture); return; }
+                // The path arrives mangled (e.g. "C//Users/..."), so only trust the file name.
+                var raw = !string.IsNullOrEmpty(tex.relativePath) ? tex.relativePath : tex.path;
+                file = Path.GetFileNameWithoutExtension((raw ?? "").Replace('\\', '/'));
+            }
+            else if (TryPoliigonBaseColor(material.name, out var poliigonFile, out var size))
+            {
+                // Poliigon's add-on routes the color through a "COLOR * AO" mix node, so no texture reaches the FBX.
+                // Its names are predictable: Poliigon_<Name>_<Id>_2K → Poliigon_<Name>_<Id>_BaseColor in a 2K folder.
+                file = poliigonFile;
+                preferFolder = "/" + size + "/";
+            }
             if (string.IsNullOrEmpty(file)) return;
             var found = AssetDatabase.FindAssets(file + " t:Texture2D")
                 .Select(AssetDatabase.GUIDToAssetPath)
-                .FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == file);
+                .Where(p => Path.GetFileNameWithoutExtension(p) == file)
+                .OrderByDescending(p => preferFolder != null && p.Contains(preferFolder))
+                .FirstOrDefault();
             if (found == null)
             {
                 Debug.LogWarning($"[Portfolio] {assetPath}: texture '{file}' for material '{material.name}' isn't in the project. Put it under Assets/_Portfolio/Art/Textures.");
@@ -60,6 +71,17 @@ namespace Portfolio.EditorTools
             context.DependsOnSourceAsset(found);
             material.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>(found));
             material.SetColor("_BaseColor", Color.white);
+        }
+
+        static bool TryPoliigonBaseColor(string materialName, out string baseColorFile, out string size)
+        {
+            baseColorFile = size = null;
+            if (!materialName.StartsWith("Poliigon_")) return false;
+            var m = System.Text.RegularExpressions.Regex.Match(materialName, @"^(Poliigon_.+?_\d+)(?:_(\d+K))?$");
+            if (!m.Success) return false;
+            baseColorFile = m.Groups[1].Value + "_BaseColor";
+            size = m.Groups[2].Success ? m.Groups[2].Value : "";
+            return true;
         }
 
         /// <summary>Textures for the models: 1024 is plenty for the toon look and keeps the web build small.</summary>

@@ -7,7 +7,10 @@ namespace Portfolio
     /// What the overview camera looks at: the player, with look-ahead so the frame opens toward where the
     /// player is facing (rule of thirds: the player sits on the third line, two thirds of the screen ahead
     /// of them). Also rises with the player's height (stairs, mezzanine) so the upper level comes into view.
+    /// Runs before Cinemachine (early execution order) so the camera never reads last frame's position, and
+    /// confines itself to the room before the camera's damping, so stops at the walls are eased, not snapped.
     /// </summary>
+    [DefaultExecutionOrder(-500)]
     public class OverviewTarget : MonoBehaviour
     {
         [SerializeField] Transform player;
@@ -21,9 +24,9 @@ namespace Portfolio
         [Tooltip("How far off-center the player sits, as a fraction of the screen. 1/6 puts them on the third line.")]
         [SerializeField, Range(0f, 0.4f)] float lookAhead = 1f / 6f;
         [Tooltip("Seconds to swing the look-ahead when the player turns.")]
-        [SerializeField] float lookAheadSmoothing = 0.9f;
+        [SerializeField] float lookAheadSmoothing = 1.2f;
         [Tooltip("How fast the look-ahead direction follows the walking direction (higher = snappier). Low values ignore the quick turns at path corners.")]
-        [SerializeField] float directionFollow = 1.5f;
+        [SerializeField] float directionFollow = 1f;
         [Tooltip("Below this speed (m/s) the direction is kept, so stopping or tiny moves don't swing the frame.")]
         [SerializeField] float minSpeed = 1f;
 
@@ -43,7 +46,17 @@ namespace Portfolio
             p.y = roomCenter.y + PlayerHeight * followHeight;
 
             offset = Vector3.SmoothDamp(offset, DesiredLookAhead(), ref offsetVelocity, lookAheadSmoothing);
-            transform.position = p + offset;
+            var target = p + offset;
+
+            // Keep the framed point where the view still fits inside the walls (continuous clamp).
+            var confiner = viewCamera ? viewCamera.GetComponent<CinemachineRoomConfiner>() : null;
+            if (confiner && confiner.enabled)
+            {
+                var cam = Camera.main;
+                float aspect = cam ? cam.aspect : Aspect.Ratio;
+                target = confiner.ConfineFocus(target, viewCamera.transform.rotation, viewCamera.Lens.OrthographicSize, aspect);
+            }
+            transform.position = target;
         }
 
         /// <summary>

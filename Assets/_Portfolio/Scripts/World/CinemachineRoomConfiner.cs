@@ -61,21 +61,69 @@ namespace Portfolio
             }
             if (!KeepInsideWalls) return;
 
+            // Safety net: targets that pre-confine themselves (OverviewTarget) rarely trigger this.
+            var pos = state.RawPosition;
+            var confined = ClampCameraPosition(pos, rot, size, aspect);
+            state.PositionCorrection += confined - pos;
+        }
+
+        /// <summary>The largest lens size the view can have and still fit inside the room at this angle/aspect.</summary>
+        public float MaxFitSize(Quaternion rot, float aspect)
+        {
+            if (!Mathf.Approximately(aspect, cachedAspect) || Quaternion.Angle(rot, cachedRotation) > 0.01f)
+                UpdateAnchor(rot, aspect);
+            return maxSize * PanRoom;
+        }
+
+        /// <summary>
+        /// Nearest point to <paramref name="focus"/> (the point the camera centers on) whose view fits inside
+        /// the room. Lets a follow target confine itself *before* the camera's damping, so the camera eases into
+        /// the wall limit instead of being corrected abruptly after it.
+        /// </summary>
+        public Vector3 ConfineFocus(Vector3 focus, Quaternion rot, float size, float aspect)
+        {
+            if (!KeepInsideWalls) return focus;
+            size = Mathf.Min(size, MaxFitSize(rot, aspect));
+            var fwd = rot * Vector3.forward;
+            var cam = focus - fwd * ProbeDistance;
+            return ClampCameraPosition(cam, rot, size, aspect) + fwd * ProbeDistance;
+        }
+
+        /// <summary>
+        /// Clamps across the view one screen axis at a time (right, then up), each a 1-D search from a position
+        /// that fits. Unlike pulling back along a line toward a fixed point, the result changes smoothly as the
+        /// target moves, so the camera slides along the walls instead of jumping.
+        /// </summary>
+        Vector3 ClampCameraPosition(Vector3 pos, Quaternion rot, float size, float aspect)
+        {
+            if (!Mathf.Approximately(aspect, cachedAspect) || Quaternion.Angle(rot, cachedRotation) > 0.01f)
+                UpdateAnchor(rot, aspect);
             var fwd = rot * Vector3.forward;
             var anchorPos = anchorFocus - fwd * ProbeDistance;
             // Only the position across the view matters for an orthographic camera; keep the body's depth.
-            var pos = state.RawPosition;
             var desired = OnViewPlane(pos, anchorPos, fwd);
-            if (Fits(desired, rot, size, aspect)) return;
+            if (Fits(desired, rot, size, aspect)) return pos;
 
+            var right = rot * Vector3.right;
+            var up = rot * Vector3.up;
+            var p = anchorPos;
+            p += right * Reach(p, right, Vector3.Dot(desired - p, right), rot, size, aspect);
+            p += up * Reach(p, up, Vector3.Dot(desired - p, up), rot, size, aspect);
+            p += right * Reach(p, right, Vector3.Dot(desired - p, right), rot, size, aspect); // settle into corners
+            return p + fwd * Vector3.Dot(pos - p, fwd);
+        }
+
+        /// <summary>How far (up to <paramref name="distance"/>) one can move from a fitting position along dir and still fit.</summary>
+        float Reach(Vector3 from, Vector3 dir, float distance, Quaternion rot, float size, float aspect)
+        {
+            if (Mathf.Abs(distance) < 1e-4f || Fits(from + dir * distance, rot, size, aspect)) return distance;
             float lo = 0f, hi = 1f;
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 14; i++)
             {
                 float mid = (lo + hi) * 0.5f;
-                if (Fits(Vector3.Lerp(anchorPos, desired, mid), rot, size, aspect)) lo = mid; else hi = mid;
+                if (Fits(from + dir * (distance * mid), rot, size, aspect)) lo = mid; else hi = mid;
             }
-            var confined = Vector3.Lerp(anchorPos, desired, lo);
-            state.PositionCorrection += confined - desired;
+            return distance * lo;
         }
 
         /// <summary>Moves p along the view direction onto the plane through reference (perpendicular to fwd).</summary>
