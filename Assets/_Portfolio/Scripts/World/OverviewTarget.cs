@@ -46,7 +46,8 @@ namespace Portfolio
             p.y = roomCenter.y + PlayerHeight * followHeight;
 
             offset = Vector3.SmoothDamp(offset, DesiredLookAhead(), ref offsetVelocity, lookAheadSmoothing);
-            var target = p + offset;
+            var panZoom = GetComponent<CameraPanZoom>();
+            var target = p + offset + (panZoom ? panZoom.Pan : Vector3.zero);
 
             // Keep the framed point where the view still fits inside the walls (continuous clamp).
             var confiner = viewCamera ? viewCamera.GetComponent<CinemachineRoomConfiner>() : null;
@@ -54,7 +55,10 @@ namespace Portfolio
             {
                 var cam = Camera.main;
                 float aspect = cam ? cam.aspect : Aspect.Ratio;
-                target = confiner.ConfineFocus(target, viewCamera.transform.rotation, viewCamera.Lens.OrthographicSize, aspect);
+                var confined = confiner.ConfineFocus(target, viewCamera.transform.rotation, viewCamera.Lens.OrthographicSize, aspect);
+                // Drop the part of a drag that pushes past the walls, so dragging back responds immediately.
+                if (panZoom) panZoom.Pan += confined - target;
+                target = confined;
             }
             transform.position = target;
         }

@@ -125,6 +125,8 @@ namespace Portfolio.EditorTools
             SetValues(mover, ("clickMask", Physics.DefaultRaycastLayers)); // skips Ignore Raycast: player + camera zones
             var game = new GameObject("PortfolioGame").AddComponent<PortfolioGame>();
             SetRefs(game, ("player", mover), ("panel", panel), ("quickNav", nav));
+            PortfolioAudio.AddMusicToScene();
+            PortfolioCameraControls.AddPanZoom();
 
             EditorSceneManager.SaveScene(scene, WorkshopScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(WorkshopScenePath, true) };

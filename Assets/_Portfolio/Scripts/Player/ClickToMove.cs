@@ -27,6 +27,7 @@ namespace Portfolio
         /// <summary>The station the player is walking to or standing at (null after clicking the floor).</summary>
         public Station Destination { get; private set; }
         Station hovered;
+        bool pressStartedOverUI;
         Vector3 bodyRest;
         float bobPhase;
 
@@ -73,7 +74,10 @@ namespace Portfolio
             // Touch screens have no hover state.
             SetHovered(pointer is Mouse ? hit : null);
 
-            if (!overUI && hasPoint && pointer.press.wasPressedThisFrame)
+            // Act on release, not press: a press that turns into a drag pans the map (CameraPanZoom) instead.
+            // Whether it started over the UI is remembered from the press (touch releases don't report UI hits).
+            if (pointer.press.wasPressedThisFrame) pressStartedOverUI = overUI;
+            if (!pressStartedOverUI && !CameraPanZoom.DragConsumedPointer && hasPoint && pointer.press.wasReleasedThisFrame)
             {
                 if (hit) GoTo(hit);
                 else MoveTo(point);
@@ -85,6 +89,13 @@ namespace Portfolio
             pending = station;
             Destination = station;
             SetDestination(station.ApproachPosition);
+        }
+
+        /// <summary>Forget the station being visited (e.g. the visitor dragged the map away), without moving.</summary>
+        public void ClearDestination()
+        {
+            pending = null;
+            Destination = null;
         }
 
         public void MoveTo(Vector3 point)

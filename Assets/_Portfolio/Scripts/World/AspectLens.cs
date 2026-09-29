@@ -31,11 +31,14 @@ namespace Portfolio
         [SerializeField] OverviewTarget heightSource;
         [Tooltip("Extra orthographic size per meter the player is above the floor.")]
         [SerializeField] float zoomOutPerMeter = 0.35f;
+        [Tooltip("Optional: pinch / mouse-wheel zoom from the player (multiplies the size).")]
+        [SerializeField] CameraPanZoom userZoom;
 
         CinemachineCamera vcam;
         CinemachinePositionComposer composer;
         float lastRatio = -1f;
         float lastHeight = -1f;
+        float lastZoom = -1f;
 
         void OnEnable()
         {
@@ -52,13 +55,15 @@ namespace Portfolio
             if (!controlLens) return;
             float ratio = Aspect.Ratio;
             float height = heightSource ? heightSource.PlayerHeight : 0f;
-            if (Mathf.Approximately(ratio, lastRatio) && Mathf.Abs(height - lastHeight) < 0.01f) return;
+            float zoom = userZoom ? userZoom.Zoom : 1f;
+            if (Mathf.Approximately(ratio, lastRatio) && Mathf.Abs(height - lastHeight) < 0.01f && Mathf.Approximately(zoom, lastZoom)) return;
+            lastZoom = zoom;
             lastRatio = ratio;
             lastHeight = height;
 
             bool portrait = ratio < 1f;
             var lens = vcam.Lens;
-            lens.OrthographicSize = (portrait ? portraitVisibleWidth / (2f * ratio) : landscapeSize) + height * zoomOutPerMeter;
+            lens.OrthographicSize = ((portrait ? portraitVisibleWidth / (2f * ratio) : landscapeSize) + height * zoomOutPerMeter) * zoom;
             vcam.Lens = lens;
 
             if (composer)

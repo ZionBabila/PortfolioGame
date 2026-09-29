@@ -49,7 +49,8 @@ namespace Portfolio
 
         void Update()
         {
-            bool want = inside > 0 && (!station || (player && player.Destination == station));
+            // Zones stand aside while the visitor is exploring the map by dragging (until "Find me" / walking).
+            bool want = inside > 0 && !CameraPanZoom.Exploring && (!station || (player && player.Destination == station));
             if (want != active) SetActive(want);
         }
 
