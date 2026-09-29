@@ -114,9 +114,9 @@ namespace Portfolio.EditorTools
             var view = floor;
             var apron = workshop.GetComponentsInChildren<Renderer>().FirstOrDefault(r => r.name == "FloorApron");
             if (apron) view.Encapsulate(apron.bounds);
-            // A bit more frontal than the corner diagonal: the floor reads less like a diamond, so a much wider
-            // view fits inside the walls (~16 m of the 18 m width at 16:9).
-            var viewRotation = Quaternion.Euler(45f, yaw + 17.5f, 0f);
+            // Top-down with a slight tilt (Coin Master style): look straight at the window wall, 55° down.
+            // yaw points at the back-left corner; snap it to the nearest wall direction.
+            var viewRotation = Quaternion.Euler(55f, Mathf.Round((yaw + 45f) / 90f) * 90f, 0f);
             BuildCinemachineRig(player.transform, stations, viewRotation, floor, walls, view);
 
             BuildUI(out var panel, out var nav);

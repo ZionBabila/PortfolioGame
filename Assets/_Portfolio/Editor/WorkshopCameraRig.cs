@@ -20,7 +20,7 @@ namespace Portfolio.EditorTools
         const float OverviewLandscapeSize = 4.0f; // max that fits at 16:9 is ~5.3; the gap is room for look-ahead
         const float OverviewPortraitWidth = 6.2f; // max at 9:16 is ~8.3 m across; the gap is room for look-ahead
         // How far the gallery camera turns from the main angle to face the mezzanine wall.
-        const float GalleryYawOffset = 45f;
+        const float GalleryYawOffset = 40f;
 
         struct RoomLimits
         {
@@ -66,7 +66,7 @@ namespace Portfolio.EditorTools
 
             // The mezzanine runs along the side wall, which the main angle sees edge-on. On the stairs and up
             // there, turn to face that wall so the whole gallery (and its station) reads clearly.
-            var galleryRotation = Quaternion.Euler(40f, viewRotation.eulerAngles.y - GalleryYawOffset, 0f);
+            var galleryRotation = Quaternion.Euler(45f, viewRotation.eulerAngles.y - GalleryYawOffset, 0f);
             var mezzanine = GameObject.Find("Mezzanine");
             if (mezzanine)
             {
