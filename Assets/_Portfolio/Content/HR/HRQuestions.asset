@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee2da62fe380d9045bfdf48f3dca6ce3, type: 3}
+  m_Name: HRQuestions
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.HRQuestionSet
+  speakerName: "Dana \xB7 HR"
+  intros:
+  - Hi! I'm Dana from HR. Got a minute? Great, it wasn't really a question.
+  - There you are! I've been looking all over the workshop for you.
+  greetings:
+  - 'Oh, hi again! Quick follow-up:'
+  - 'Found you! Just one more tiny thing:'
+  - 'You walk fast. Anyway:'
+  - 'Don''t mind me, just updating your file:'
+  - Sorry, sorry, last one. Probably.
+  goodbyes:
+  - Great chat!
+  - Can I go now?
+  - Thanks, Dana!
+  - Noted. Bye!
+  runAwayLabel: Run away!
+  questions:
+  - question: Where do you see yourself in five years?
+    answers:
+    - text: Right here. This loft has great light.
+      reply: 'Stability. Writing down: "emotionally attached to windows".'
+    - text: Behind you. Always one step behind you.
+      reply: ...That's MY line. Let's move on.
+    - text: Still waiting for that render to finish.
+      reply: Relatable. Our payroll system renders too.
+  - question: What's your greatest weakness?
+    answers:
+    - text: I can't stop fixing other people's fillets.
+      reply: So... perfectionism. Classic.
+    - text: Bad kerning. I see it everywhere.
+      reply: Please don't look at our logo.
+    - text: Snacks near the 3D printers.
+      reply: We have a strict no-crumbs-in-the-AMS policy.
+  - question: Tell me about a time you failed.
+    answers:
+    - text: My first 3D print. It turned into spaghetti.
+      reply: Growth mindset! And carbs.
+    - text: I once worked six hours without saving.
+      reply: Ctrl+S. It's on page one of the handbook.
+    - text: I'll let you know. Any minute now.
+      reply: Confidence! Slightly worrying, but I like it.
+  - question: Why should we hire you?
+    answers:
+    - text: I design it, prototype it, and ship it.
+      reply: '"End to end." HR loves that phrase.'
+    - text: I built a whole game just to show you my CV.
+      reply: Fair. Most people just send a PDF.
+    - text: I bring my own screwdrivers.
+      reply: Saves on the budget. Noted.
+  - question: Are you a team player?
+    answers:
+    - text: Yes. I also get along great with the printers.
+      reply: The printers gave you a glowing reference.
+    - text: Absolutely. I even share my calipers.
+      reply: That's basically a love language here.
+    - text: I'm talking to HR voluntarily, aren't I?
+      reply: You were chased. But I appreciate the spirit.
+  - question: How do you handle pressure?
+    answers:
+    - text: With a hydraulic press, ideally.
+      reply: Engineers. Every single time.
+    - text: Deep breath. Then a sketch.
+      reply: Healthy! Adding "sketches under stress".
+    - text: 'Same as deadlines: coffee.'
+      reply: Our coffee machine is ready for you.
+  - question: What are your salary expectations?
+    answers:
+    - text: Enough for unlimited filament.
+      reply: PLA or PETG? This affects the budget.
+    - text: Let's talk after you see the portfolio.
+      reply: Smart. Very smart. Suspiciously smart.
+    - text: Can I be paid in walnut veneer?
+      reply: I'll ask accounting. They'll say no.
+  - question: Describe yourself in three words.
+    answers:
+    - text: Curious. Hands-on. Caffeinated.
+      reply: That's four if you count the hyphen.
+    - text: Designer who codes.
+      reply: Also four... never mind, nobody counts anymore.
+    - text: Please hire me.
+      reply: Direct! I respect that.
+  - question: Do you have any questions for us?
+    answers:
+    - text: Is there a dental plan for bent drill bits?
+      reply: Only for the senior bits.
+    - text: Why are you chasing me?
+      reply: Talent acquisition. Emphasis on "acquisition".
+    - text: Can I get the desk by the windows?
+      reply: Everyone asks. The windows are very popular.
+  - question: How do you keep your skills up to date?
+    answers:
+    - text: Tutorials at 2x speed.
+      reply: And comprehension at 0.5x? Just checking.
+    - text: I take things apart to see how they work.
+      reply: Please don't take the CNC apart. It's rented.
+    - text: I follow the smell of new tools.
+      reply: That's the laser cutter. Stay back.
+  - question: What motivates you?
+    answers:
+    - text: The moment a prototype actually works.
+      reply: Beautiful. I'll print that on a mug.
+    - text: Solving problems nobody noticed yet.
+      reply: Could you notice ours? It's the Wi-Fi.
+    - text: Currently? Getting away from HR.
+      reply: Motivation is motivation.
+  - question: Can you work under tight deadlines?
+    answers:
+    - text: Deadlines are where the best prototypes come from.
+      reply: Inspiring. Also slightly alarming.
+    - text: Deadlines are suggestions with a clock.
+      reply: Please never say that to a producer.
+    - text: Only if the printer cooperates.
+      reply: It never does. Welcome to the team.

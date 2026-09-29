@@ -114,7 +114,7 @@ namespace Portfolio.EditorTools
             var view = floor;
             var apron = workshop.GetComponentsInChildren<Renderer>().FirstOrDefault(r => r.name == "FloorApron");
             if (apron) view.Encapsulate(apron.bounds);
-            // Top-down with a slight tilt (Coin Master style): look straight at the window wall, 55° down.
+            // Top-down with a slight tilt (Coin Master style): look straight at the window wall, 55ï¿½ down.
             // yaw points at the back-left corner; snap it to the nearest wall direction.
             var viewRotation = Quaternion.Euler(55f, Mathf.Round((yaw + 45f) / 90f) * 90f, 0f);
             BuildCinemachineRig(player.transform, stations, viewRotation, floor, walls, view);
@@ -127,6 +127,7 @@ namespace Portfolio.EditorTools
             SetRefs(game, ("player", mover), ("panel", panel), ("quickNav", nav));
             PortfolioAudio.AddMusicToScene();
             PortfolioCameraControls.AddPanZoom();
+            AddHRRecruiter();
 
             EditorSceneManager.SaveScene(scene, WorkshopScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(WorkshopScenePath, true) };

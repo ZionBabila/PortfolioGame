@@ -98,6 +98,22 @@ namespace Portfolio
             Destination = null;
         }
 
+        /// <summary>Stop walking right here (e.g. someone stopped you for a chat).</summary>
+        public void Halt()
+        {
+            ClearDestination();
+            if (agent.isOnNavMesh) agent.ResetPath();
+            if (clickMarker) clickMarker.gameObject.SetActive(false);
+        }
+
+        /// <summary>Turn to look at a point (instantly).</summary>
+        public void FaceTowards(Vector3 point)
+        {
+            var dir = point - transform.position;
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(dir);
+        }
+
         public void MoveTo(Vector3 point)
         {
             pending = null;
