@@ -26,6 +26,9 @@ WebGL build on GitHub Pages: https://zionbabila.github.io/PortfolioGame/ . The o
   direction; rises/zooms with player height). Station zones (`CameraZone` with `station` set) activate only when the
   player is visiting that station. `CM Gallery` zone faces the mezzanine. `CinemachineRoomConfiner` keeps every view
   inside the walls (Confiner2D can't: it bakes in world XY). Game view: Ctrl+Alt+1 = 1920×1080, Ctrl+Alt+2 = 1080×1920.
+- HR recruiter NPC (`Scripts/NPC`): wanders, chases the player, asks a question from
+  `Content/HR/HRQuestions.asset` (edit text there), then leaves them alone for `cooldown` seconds.
+  Rebuild/re-wire: Portfolio → NPC → Add HR Recruiter.
 - Text is TextMeshPro: Roboto (default) with Heebo as Hebrew fallback, then LiberationSans for symbols.
 - Web: `PROJECT:Responsive` WebGL template (full window), Gzip + decompression fallback (Pages has no Content-Encoding),
   no splash, Render Scale 1 + MSAA 4 (Web uses the "Mobile" URP asset).
