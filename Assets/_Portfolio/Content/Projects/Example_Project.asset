@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a231eea62523459793eb6f5551be206c, type: 3}
+  m_Name: Example_Project
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.ProjectData
+  title: Example Project
+  tagline: 'One sentence: what it is and who it is for.'
+  year: 2026
+  category: Consumer product
+  cover: {fileID: 0}
+  accent: {r: 0.42, g: 0.62, b: 0.95, a: 1}
+  gallery: []
+  explodedView: {fileID: 0}
+  explodedCaption: Exploded view - main parts and how they assemble
+  challenge: 'The problem or brief in 2-3 sentences. Who struggles with what, and
+    the insight you found.'
+  solution: 'What you designed and why it works. Name the key features in plain
+    words.'
+  process: 'Optional: research, sketches, foam models, prototypes, user tests -
+    what changed between iterations.'
+  role: Industrial designer (solo)
+  duration: 10 weeks
+  context: Final project / client / personal
+  tools: SolidWorks, KeyShot, Bambu 3D printing
+  facts:
+  - label: Materials
+    value: PP, aluminium, silicone
+  - label: Manufacturing
+    value: Injection moulding, CNC
+  links: []

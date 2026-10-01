@@ -9,6 +9,9 @@ WebGL build on GitHub Pages: https://zionbabila.github.io/PortfolioGame/ . The o
 - `Assets/_Portfolio/Scenes/Workshop.unity` — the scene. The owner edits it by hand: never regenerate it
   (`Portfolio → Advanced → Rebuild Workshop Scene From Scratch` overwrites it — only with explicit permission).
 - `Assets/_Portfolio/Content/Stations/*.asset` — station text/links (StationData). Content lives here, not in code.
+- `Assets/_Portfolio/Content/Projects/*.asset` — industrial-design projects (ProjectData: cover, 2-5 gallery images,
+  exploded view, challenge/solution/process, facts, links). Listed via `StationData.projects` as cards in the station
+  panel; `ProjectViewer` (built in code at runtime, no scene objects) opens them full-screen. Owner guide: `Docs/ProjectTemplate.md`.
 - `Assets/_Portfolio/Editor/` — tooling (menu **Portfolio**): Sync Workshop From Blender, Build WebGL,
   Publish To Website, Upload Last Build, Test Build Locally, camera zones, fonts, TMP conversion, render quality.
 - `Assets/_Portfolio/Scripts/` — runtime: ClickToMove (NavMesh), Station, StationPanel (side panel 16:9 / bottom sheet

@@ -31,6 +31,7 @@ namespace Portfolio
         [SerializeField] float animSpeed = 10f;
 
         readonly List<LinkButton> spawned = new();
+        readonly List<GameObject> projectCards = new();
         bool open;
         float shown;
 
@@ -62,6 +63,18 @@ namespace Portfolio
 
             foreach (var b in spawned) Destroy(b.gameObject);
             spawned.Clear();
+            foreach (var c in projectCards) Destroy(c);
+            projectCards.Clear();
+            var font = title ? title.font : null;
+            for (int i = 0; i < data.projects.Count; i++)
+            {
+                var project = data.projects[i];
+                if (!project) continue;
+                var card = ProjectViewer.CreateCard(linksRoot, project, font, () =>
+                    ProjectViewer.Get(GetComponentInParent<Canvas>().rootCanvas.transform, font, linkTemplate).Show(project));
+                card.transform.SetSiblingIndex(projectCards.Count); // cards first, links after
+                projectCards.Add(card.gameObject);
+            }
             foreach (var link in data.links)
             {
                 var b = Instantiate(linkTemplate, linksRoot);
@@ -83,6 +96,7 @@ namespace Portfolio
 
         public void Hide()
         {
+            ProjectViewer.HideCurrent();
             open = false;
             group.blocksRaycasts = false;
         }
