@@ -25,5 +25,7 @@ namespace Portfolio
         public Sprite image;
         public Color accent = new(0.95f, 0.55f, 0.3f);
         public List<StationLink> links = new();
+        [Tooltip("Project cards shown above the links; each opens a full-screen project page.")]
+        public List<ProjectData> projects = new();
     }
 }

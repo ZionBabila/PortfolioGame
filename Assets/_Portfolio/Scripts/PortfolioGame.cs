@@ -25,6 +25,11 @@ namespace Portfolio
             var kb = Keyboard.current;
             if (kb != null && kb.escapeKey.wasPressedThisFrame)
             {
+                if (ProjectViewer.IsOpen)
+                {
+                    ProjectViewer.HideCurrent(); // Esc closes the project page first, then the station panel
+                    return;
+                }
                 panel.Hide();
                 if (quickNav) quickNav.Close();
             }

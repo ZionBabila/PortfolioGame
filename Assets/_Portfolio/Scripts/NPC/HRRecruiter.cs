@@ -112,7 +112,7 @@ namespace Portfolio
         }
 
         bool CanApproach() =>
-            !HRDialog.IsOpen && !(stationPanel && stationPanel.IsOpen) && player.isActiveAndEnabled;
+            !HRDialog.IsOpen && !ProjectViewer.IsOpen && !(stationPanel && stationPanel.IsOpen) && player.isActiveAndEnabled;
 
         void SetState(State next)
         {
