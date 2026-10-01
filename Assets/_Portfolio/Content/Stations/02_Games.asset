@@ -22,7 +22,13 @@ MonoBehaviour:
   image: {fileID: 0}
   accent: {r: 0.45, g: 0.78, b: 0.45, a: 1}
   links:
-  - label: Game One
-    url: games/game-one/
-  - label: Game Two
-    url: games/game-two/
+  - label: ShellBound
+    url: https://zionbabila.itch.io/shellbound
+  - label: Maskadu
+    url: https://hadarsa.itch.io/maskadu
+  - label: Where is my Mind
+    url: https://yoavidi.itch.io/where-is-my-mind
+  - label: ChatBaker Hidden Objects
+    url: https://zionbabila.itch.io/chatbakerhiddenobject
+  - label: "Kaa\u2019s Journey Back"
+    url: https://zionbabila.itch.io/kaas-journey-back
