@@ -120,3 +120,6 @@ InitTestScene*.unity*
 # They stay on this machine; the web build still includes them.
 /Assets/_Portfolio/Art/Textures/Poliigon_*/
 /Assets/_Portfolio/Art/Textures/Poliigon_*.meta
+
+# Intermediate full-canvas layer PNGs; regenerate with Art/UI/tools/gen.html
+Art/UI/layers/
