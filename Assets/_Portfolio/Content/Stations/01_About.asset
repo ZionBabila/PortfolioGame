@@ -14,13 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Portfolio.StationData
   title: About Me
   kind: 0
-  subtitle: Game developer
-  body: 'Short intro: who you are, what you build, what you''re looking for.
-
-
-    Edit this in Assets/_Portfolio/Content/Stations/01_About.asset'
+  subtitle: Industrial designer & tech artist
+  body: "An industrial designer and maker who builds physical things people interact with, and play with. Years of hands-on product design, from concept and CAD to electronics, fabrication and manufacturing.\n\nThen I studied game development at Shenkar (highest honors), and Unity became the place where it all meets: I script gameplay, build visual and animation pipelines, and shape how games look, move and feel.\n\nI like the space where engineering logic and visual design live together. This workshop is that space."
   image: {fileID: 0}
   accent: {r: 0.98, g: 0.62, b: 0.32, a: 1}
   links:
-  - label: Download CV
-    url: https://example.com/cv.pdf
+  - label: CV - Tech Artist
+    url: cv/Zion_Babila_CV_Tech_Artist.pdf
+  - label: CV - Industrial Designer
+    url: cv/Zion_Babila_CV_Industrial_Designer.pdf
+  projects: []
+  variants:
+  - profile: techart
+    subtitle: Tech artist / game developer
+    body: "An industrial designer and game developer, looking for a Tech Artist role. Years of building playable, sensor-driven products with microcontrollers and custom electronics taught me how things should respond to people.\n\nToday Unity is where my passions meet: I script gameplay, build visual and animation pipelines, and shape how games look, move and feel. I'm at my best where mechanics and aesthetics meet, where engineering logic and visual design live in the same space."
+    links:
+    - label: Download CV
+      url: cv/Zion_Babila_CV_Tech_Artist.pdf
+  - profile: design
+    subtitle: Industrial designer / maker
+    body: "An industrial designer and maker who builds physical products people interact with, and play with. Years of hands-on product design, from concept and CAD to electronics, fabrication and manufacturing.\n\nFormal game-design training shapes how I think about interaction, feedback and engagement. I create objects that respond: touch-controlled lighting, sensor-driven products, and large-scale playable installations."
+    links:
+    - label: Download CV
+      url: cv/Zion_Babila_CV_Industrial_Designer.pdf

@@ -34,7 +34,14 @@ namespace Portfolio
 
             if (skin) SkinShell();
 
-            foreach (var station in stations)
+            // The pitch decides the order: games first for a tech-art link, design projects first for a design link.
+            StationKind? lead = Profile.Current == Profile.TechArt ? StationKind.Game
+                : Profile.Current == Profile.Design ? StationKind.Project : null;
+            var ordered = lead.HasValue
+                ? System.Linq.Enumerable.ToList(System.Linq.Enumerable.OrderByDescending(stations, s => s.data && s.data.kind == lead.Value))
+                : new List<Station>(stations);
+
+            foreach (var station in ordered)
             {
                 var item = Instantiate(itemTemplate, itemTemplate.transform.parent);
                 item.gameObject.SetActive(true);
@@ -108,6 +115,7 @@ namespace Portfolio
             var label = item.GetComponentInChildren<TMP_Text>(true);
             if (label)
             {
+                skin.Label(label, 1f);
                 label.alignment = TextAlignmentOptions.MidlineLeft;
                 label.color = skin.ink;
                 label.fontStyle = FontStyles.Normal;

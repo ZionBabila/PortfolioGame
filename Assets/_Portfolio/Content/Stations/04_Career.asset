@@ -15,13 +15,15 @@ MonoBehaviour:
   title: Career Path
   kind: 3
   subtitle: Experience & education
-  body: '2024 - now   Role @ Company
-
-    2022 - 2024  Role @ Company
-
-    2019 - 2022  Studies @ School'
+  body: "<b>Game development</b>\n2025-2026  Shenkar: 5 games in Unity / C#, a Global Game Jam game in 48 hours, and two solo projects (a 2D platformer and a 3D game with a Blender-rigged hero)\n\n<b>Design & making</b>\n2017-2024  Babilanur, my own brand of touch-controlled lighting objects\n2023-2024  Umasqu, product & electronics developer: PCB design, technical files, FCC/CE certification\n2023-2025  Interactive installations: \"Simon\" for monday.com, \"Point of Light\"\n2022-2023  Tel Aviv Museum of Art: props for Erwin Wurm's \"Narrow House\", lighting for the Miniature Rooms\n\n<b>Camera & production</b>\n2024-2026  Cinema camera technician, Diff-e-rent\n2021-2023  Cinema camera technician, Fitussi Camera Services\n2016-2020  Production equipment coordinator, Movie Mobile\n\n<b>Education</b>\n2025-2026  Game Development, Shenkar (highest honors)\n2021-2022  Design Terminal designers' incubator, Bat Yam\n2008-2011  Film & Television Technician Diploma, Sapir College"
   image: {fileID: 0}
   accent: {r: 0.78, g: 0.5, b: 0.9, a: 1}
   links:
   - label: LinkedIn
-    url: https://www.linkedin.com/
+    url: https://www.linkedin.com/in/zion-babila-designer-iot-touchdesigner
+  projects: []
+  variants:
+  - profile: design
+    subtitle: 
+    body: "<b>Design & making</b>\n2017-2024  Babilanur, my own brand of touch-controlled lighting objects\n2023-2024  Umasqu, product & electronics developer: PCB design, technical files, FCC/CE certification\n2023-2025  Interactive installations: \"Simon\" for monday.com, \"Point of Light\"\n2022-2023  Tel Aviv Museum of Art: props for Erwin Wurm's \"Narrow House\", lighting for the Miniature Rooms\n\n<b>Game design training</b>\n2025-2026  Shenkar: interaction, feedback and engagement; 5 games in Unity / C#, a Global Game Jam game in 48 hours, a solo 3D project with a Blender-rigged character\n\n<b>Camera & production</b>\n2024-2026  Cinema camera technician, Diff-e-rent\n2021-2023  Cinema camera technician, Fitussi Camera Services\n2016-2020  Production equipment coordinator, Movie Mobile\n\n<b>Education</b>\n2025-2026  Game Development, Shenkar (highest honors)\n2021-2022  Design Terminal designers' incubator, Bat Yam\n2008-2011  Film & Television Technician Diploma, Sapir College"
+    links: []

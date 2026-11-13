@@ -15,11 +15,15 @@ MonoBehaviour:
   title: Contact
   kind: 4
   subtitle: Let's talk
-  body: Where to find me.
+  body: "Looking for a tech artist, or someone who can take an idea from sketch to a working, playable thing? Let's talk."
   image: {fileID: 0}
   accent: {r: 0.95, g: 0.8, b: 0.3, a: 1}
   links:
+  - label: LinkedIn
+    url: https://www.linkedin.com/in/zion-babila-designer-iot-touchdesigner
   - label: GitHub
     url: https://github.com/ZionBabila
+  - label: itch.io
+    url: https://zionbabila.itch.io
   - label: Email
     url: mailto:you@example.com

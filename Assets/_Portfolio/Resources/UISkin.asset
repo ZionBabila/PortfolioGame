@@ -65,3 +65,5 @@ MonoBehaviour:
   ink: {r: 0.16862746, g: 0.14901961, b: 0.13333334, a: 1}
   inkSoft: {r: 0.42745098, g: 0.39215687, b: 0.3529412, a: 1}
   accent: {r: 0.8862745, g: 0.38039216, b: 0.12156863, a: 1}
+  typewriter: {fileID: 11400000, guid: 47c77b4db1021ef4cb8a0f1fd17ee794, type: 2}
+  label: {fileID: 11400000, guid: eefd7eb1bbd0f3b4ca247600e1487853, type: 2}

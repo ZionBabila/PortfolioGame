@@ -70,6 +70,10 @@ namespace Portfolio
             drop.effectColor = new Color(skin.ink.r, skin.ink.g, skin.ink.b, 0.25f);
             drop.effectDistance = new Vector2(5, -8);
 
+            skin.Label(speakerLabel, 6f);
+            skin.Type(greetingLabel, FontStyles.Italic);
+            skin.Type(questionLabel, FontStyles.Bold);
+            skin.Type(replyLabel, FontStyles.Italic);
             if (speakerLabel) speakerLabel.color = skin.accent;
             if (greetingLabel) greetingLabel.color = skin.inkSoft;
             if (questionLabel) questionLabel.color = skin.ink;

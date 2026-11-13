@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace Portfolio
@@ -20,6 +21,12 @@ namespace Portfolio
         public Color ink = new Color32(43, 38, 34, 255);
         public Color inkSoft = new Color32(109, 100, 90, 255);
         public Color accent = new Color32(226, 97, 31, 255);
+
+        [Header("Type (filled by Portfolio → UI → Set Up Workshop Fonts)")]
+        [Tooltip("Courier Prime: titles, body, the typed-letter voice. Bold comes from its weight table.")]
+        public TMP_FontAsset typewriter;
+        [Tooltip("Work Sans: small labels, buttons, menus.")]
+        public TMP_FontAsset label;
 
         static UISkin cached;
         Dictionary<string, Sprite> byName;
@@ -73,6 +80,22 @@ namespace Portfolio
         }
 
         public Sprite Sliced(string layerName, float border) => Sliced(layerName, Vector4.one * border);
+
+        /// <summary>Sets <paramref name="t"/> to the typewriter face (falls back to whatever it had).</summary>
+        public void Type(TMP_Text t, FontStyles style = FontStyles.Normal)
+        {
+            if (!t) return;
+            if (typewriter) t.font = typewriter;
+            t.fontStyle = style;
+        }
+
+        /// <summary>Sets <paramref name="t"/> to the small-label face.</summary>
+        public void Label(TMP_Text t, float spacing = 0f)
+        {
+            if (!t) return;
+            if (label) t.font = label;
+            t.characterSpacing = spacing;
+        }
 
         void OnValidate() => byName = null;
     }

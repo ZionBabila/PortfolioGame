@@ -78,6 +78,17 @@ namespace Portfolio
             drop.effectDistance = new Vector2(5, -8);
             if (accentBar) accentBar.gameObject.SetActive(false);
 
+            // Typed-letter voice; the small kind label is the letterhead.
+            skin.Type(title, FontStyles.Bold);
+            skin.Type(subtitle, FontStyles.Italic);
+            skin.Type(body);
+            if (body) body.fontSize = Mathf.Min(body.fontSize, 29f); // Courier runs wider than Roboto
+            if (title) title.fontSize = Mathf.Min(title.fontSize, 54f);
+            skin.Label(kindLabel, 10f);
+            if (subtitle) subtitle.color = skin.inkSoft;
+            if (title) title.color = skin.ink;
+            if (body) body.color = skin.ink;
+
             if (closeButton && closeButton.TryGetComponent<Image>(out var closeImg))
             {
                 foreach (var t in closeButton.GetComponentsInChildren<TMP_Text>(true)) t.gameObject.SetActive(false);
@@ -121,9 +132,9 @@ namespace Portfolio
             // Null-safe: a text field left empty (e.g. before converting the scene to TextMeshPro) just stays blank.
             SetText(kindLabel, data.kind.ToString().ToUpperInvariant());
             SetText(title, data.title);
-            SetText(subtitle, data.subtitle);
-            if (subtitle) subtitle.gameObject.SetActive(!string.IsNullOrEmpty(data.subtitle));
-            SetText(body, data.body);
+            SetText(subtitle, data.SubtitleNow);
+            if (subtitle) subtitle.gameObject.SetActive(!string.IsNullOrEmpty(data.SubtitleNow));
+            SetText(body, data.BodyNow);
             if (accentBar) accentBar.color = data.accent;
             if (kindLabel) kindLabel.color = data.accent;
 
@@ -148,7 +159,7 @@ namespace Portfolio
                     card.transform.SetSiblingIndex(projectCards.Count); // cards first, links after
                     projectCards.Add(card.gameObject);
                 }
-                foreach (var link in data.links)
+                foreach (var link in data.LinksNow)
                 {
                     var b = Instantiate(linkTemplate, linksRoot);
                     b.gameObject.SetActive(true);
@@ -199,7 +210,7 @@ namespace Portfolio
             }
 
             int stampCount = 0;
-            foreach (var link in data.links)
+            foreach (var link in data.LinksNow)
             {
                 if (gameLinks)
                 {

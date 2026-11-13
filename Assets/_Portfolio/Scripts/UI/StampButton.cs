@@ -28,6 +28,8 @@ namespace Portfolio
             var s = target.GetComponent<StampButton>();
             if (!s) s = target.AddComponent<StampButton>();
             s.label = target.GetComponentInChildren<TMP_Text>(true);
+            skin.Label(s.label, 2f);
+            if (s.label) s.label.fontStyle = FontStyles.Bold;
             var own = target.GetComponent<Image>();
             foreach (var o in target.GetComponents<Outline>()) o.enabled = false;
             if (paperBacking && own)

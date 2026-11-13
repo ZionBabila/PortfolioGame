@@ -23,8 +23,8 @@ namespace Portfolio
             var hint = canvas.Find("Hint");
             if (hint && hint.TryGetComponent<TMP_Text>(out var text))
             {
+                skin.Type(text, FontStyles.Italic);
                 text.color = skin.ink;
-                text.fontStyle = FontStyles.Italic;
                 text.characterSpacing = 2f;
                 // A thin outline keeps the ink readable over both the light floor and the dark machines.
                 text.outlineWidth = 0.18f;

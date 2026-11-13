@@ -18,6 +18,45 @@ namespace Portfolio.EditorTools
         const string SkinPath = SkinFolder + "/UISkin.asset";
         const string ImporterType = "UnityEditor.U2D.PSD.PSDImporter, Unity.2D.Psdimporter.Editor";
 
+        /// <summary>
+        /// Portfolio → UI → Set Up Workshop Fonts: TMP assets for Courier Prime (+Bold) and Work Sans, Heebo as the Hebrew
+        /// fallback, Courier Prime Bold as the real bold weight, and both faces stored in the UISkin.
+        /// </summary>
+        [MenuItem("Portfolio/UI/Set Up Workshop Fonts")]
+        public static void SetUpFonts()
+        {
+            PortfolioFonts.CreateFontAssets(); // makes "<name> SDF.asset" for every .ttf in Art/Fonts
+            const string dir = "Assets/_Portfolio/Art/Fonts/";
+            var courier = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(dir + "CourierPrime SDF.asset");
+            var courierBold = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(dir + "CourierPrime-Bold SDF.asset");
+            var work = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(dir + "WorkSans SDF.asset");
+            var hebrew = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(dir + "Heebo SDF.asset");
+            if (!courier || !work) { Debug.LogError("[WorkshopUI] Font assets missing; are the .ttf files in Art/Fonts?"); return; }
+
+            foreach (var f in new[] { courier, courierBold, work })
+            {
+                if (!f) continue;
+                if (hebrew && !f.fallbackFontAssetTable.Contains(hebrew)) f.fallbackFontAssetTable.Insert(0, hebrew);
+                EditorUtility.SetDirty(f);
+            }
+            if (courierBold)
+            {
+                var table = courier.fontWeightTable;
+                table[7].regularTypeface = courierBold; // 700 = Bold: use the real bold, not a faked one
+                EditorUtility.SetDirty(courier);
+            }
+
+            var skin = AssetDatabase.LoadAssetAtPath<UISkin>(SkinPath);
+            if (skin)
+            {
+                skin.typewriter = courier;
+                skin.label = work;
+                EditorUtility.SetDirty(skin);
+            }
+            AssetDatabase.SaveAssets();
+            Debug.Log("[WorkshopUI] Fonts ready: Courier Prime (+Bold), Work Sans, Heebo fallback.", skin);
+        }
+
         [MenuItem("Portfolio/UI/Import Workshop PSD")]
         public static void Run()
         {

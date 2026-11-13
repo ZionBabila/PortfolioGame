@@ -108,7 +108,7 @@ namespace Portfolio
             titleText.fontSizeMin = 10;
             titleText.fontSizeMax = 17;
             titleText.overflowMode = TextOverflowModes.Ellipsis;
-            var metaText = Text("Meta", t.body, font, meta, 10, FontStyles.Normal, skin.inkSoft);
+            var metaText = Text("Meta", t.body, skin.label ? skin.label : font, meta, 10, FontStyles.Normal, skin.inkSoft);
             Stretch(metaText.rectTransform, 12, 10, 114, 42);
             metaText.alignment = TextAlignmentOptions.TopLeft;
             metaText.characterSpacing = 8;
@@ -120,7 +120,7 @@ namespace Portfolio
             perf.anchoredPosition = new Vector2(0, 38);
             perf.GetComponent<Image>().SetNativeSize();
 
-            var admit = Text("Admit", t.body, font, "ADMIT ONE", 9, FontStyles.Bold, skin.inkSoft);
+            var admit = Text("Admit", t.body, skin.label ? skin.label : font, "ADMIT ONE", 9, FontStyles.Bold, skin.inkSoft);
             admit.rectTransform.anchorMin = Vector2.zero; admit.rectTransform.anchorMax = new Vector2(0.5f, 0);
             admit.rectTransform.pivot = new Vector2(0, 0);
             admit.rectTransform.sizeDelta = new Vector2(0, 30);
