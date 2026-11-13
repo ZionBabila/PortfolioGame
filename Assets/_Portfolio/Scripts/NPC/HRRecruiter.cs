@@ -56,10 +56,27 @@ namespace Portfolio
             if (body) bodyRest = body.localPosition;
         }
 
+        [Tooltip("Never chase before the visitor has had a first look: this long after they close their first station.")]
+        [SerializeField] float afterFirstLook = 25f;
+        [Tooltip("If the visitor never opens a station, chase anyway after this many seconds.")]
+        [SerializeField] float idleFirstChase = 90f;
+        bool firstLookDone;
+
         void Start()
         {
-            nextChaseAt = Time.time + firstChaseDelay;
+            nextChaseAt = Time.time + Mathf.Max(firstChaseDelay, idleFirstChase);
+            StationPanel.CurrentChanged += OnStationChanged;
             SetState(State.Wander);
+        }
+
+        void OnDestroy() => StationPanel.CurrentChanged -= OnStationChanged;
+
+        void OnStationChanged()
+        {
+            // The first time a station closes, give the visitor a breather, then Dana may come over.
+            if (firstLookDone || StationPanel.Current) return;
+            firstLookDone = true;
+            nextChaseAt = Mathf.Min(nextChaseAt, Time.time + Mathf.Max(firstChaseDelay, afterFirstLook));
         }
 
         void Update()

@@ -1,0 +1,161 @@
+{
+ "materials": {
+  "Cork": {
+   "hex": "E7E7E7",
+   "textured": true
+  },
+  "GalleryWood": {
+   "hex": "E7E7E7",
+   "textured": true
+  },
+  "M_Accent": {
+   "hex": "E2611F",
+   "textured": false
+  },
+  "M_Aluminium": {
+   "hex": "B9B4AC",
+   "textured": false
+  },
+  "M_Backdrop": {
+   "hex": "9DC3C9",
+   "textured": false
+  },
+  "M_Blue": {
+   "hex": "4F7A8A",
+   "textured": false
+  },
+  "M_Brass": {
+   "hex": "B8924A",
+   "textured": false
+  },
+  "M_Bulb": {
+   "hex": "FFE7B0",
+   "textured": false
+  },
+  "M_CabinetWhite": {
+   "hex": "F1EBDF",
+   "textured": false
+  },
+  "M_Cardboard": {
+   "hex": "C29A6B",
+   "textured": false
+  },
+  "M_Chrome": {
+   "hex": "CFCBC4",
+   "textured": false
+  },
+  "M_Cork": {
+   "hex": "C29A6B",
+   "textured": false
+  },
+  "M_EpoxyFloor": {
+   "hex": "8F8577",
+   "textured": false
+  },
+  "M_Fabric": {
+   "hex": "C9B79C",
+   "textured": false
+  },
+  "M_Glass": {
+   "hex": "9DC3C9",
+   "textured": false
+  },
+  "M_Leather": {
+   "hex": "8A5A3C",
+   "textured": false
+  },
+  "M_PCB": {
+   "hex": "4E7A5A",
+   "textured": false
+  },
+  "M_Paper": {
+   "hex": "EFE9DC",
+   "textured": false
+  },
+  "M_Plant": {
+   "hex": "7E9A6E",
+   "textured": false
+  },
+  "M_Plywood": {
+   "hex": "D9B98C",
+   "textured": false
+  },
+  "M_PrinterBody": {
+   "hex": "3A3533",
+   "textured": false
+  },
+  "M_Rubber": {
+   "hex": "3A3533",
+   "textured": false
+  },
+  "M_RugBlue": {
+   "hex": "5E7F8F",
+   "textured": false
+  },
+  "M_RugTerracotta": {
+   "hex": "B8664A",
+   "textured": false
+  },
+  "M_SafetyYellow": {
+   "hex": "D9A441",
+   "textured": false
+  },
+  "M_Screen": {
+   "hex": "2F3437",
+   "textured": false
+  },
+  "M_Sofa": {
+   "hex": "7E9A86",
+   "textured": false
+  },
+  "M_Softbox": {
+   "hex": "FBF6EA",
+   "textured": false
+  },
+  "M_Steel": {
+   "hex": "2B2622",
+   "textured": false
+  },
+  "M_Terracotta": {
+   "hex": "C26B4A",
+   "textured": false
+  },
+  "M_ToolRed": {
+   "hex": "C2502A",
+   "textured": false
+  },
+  "M_Wood": {
+   "hex": "B98A5E",
+   "textured": false
+  },
+  "M_WoodDark": {
+   "hex": "6B4A36",
+   "textured": false
+  },
+  "M_Yellow": {
+   "hex": "D9A441",
+   "textured": false
+  },
+  "Material": {
+   "hex": "C9B79C",
+   "textured": false
+  },
+  "Poliigon_ConcreteFloorPoured_7656_2K": {
+   "hex": "C9B79C",
+   "textured": false
+  },
+  "Poliigon_PlasterPainted_7664_1K": {
+   "hex": "E7E7E7",
+   "textured": true
+  },
+  "plasterWhiteWall": {
+   "hex": "E7E7E7",
+   "textured": true
+  },
+  "polyWood": {
+   "hex": "DBE7D2",
+   "textured": true
+  }
+ },
+ "source": "Workshop.blend"
+}
