@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a231eea62523459793eb6f5551be206c, type: 3}
+  m_Name: HelenaRubinstein
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.ProjectData
+  title: Helena Rubinstein's Miniature Rooms
+  tagline: Modern lighting for 17 historical miniature rooms at the Tel Aviv Museum of Art.
+  year: 
+  category: Exhibition lighting
+  cover: {fileID: 21300000, guid: 2deb907a71c60044397bf44f97bbeded, type: 3}
+  accent: {r: 0.5568628, g: 0.41960785, b: 0.2901961, a: 1}
+  gallery:
+  - image: {fileID: 21300000, guid: 41ee66b8a86597a449042022d6089ee4, type: 3}
+    caption: The rooms installed in the museum
+  - image: {fileID: 21300000, guid: 7e1f00e438e1ef641be681317e23e4ea, type: 3}
+    caption: 
+  - image: {fileID: 21300000, guid: 34ce614d9144df149b366d03f3b0718a, type: 3}
+    caption: Wiring through the ceiling without drilling
+  - image: {fileID: 21300000, guid: f1d2a889f952d084ab13e688e552218d, type: 3}
+    caption: A replaceable LED on its holder
+  - image: {fileID: 21300000, guid: 70c6595114834a3469d1897b80915a45, type: 3}
+    caption: A COB LED beam that mimics sunlight through a window
+  - image: {fileID: 21300000, guid: 5da774a8b66e6b8458f9a6a30d186acb, type: 3}
+    caption: An LED panel simulating soft sky light reflected in a window
+  explodedView: {fileID: 21300000, guid: 949cc94e58859d3478dd325d20af43ce, type: 3}
+  explodedCaption: 'Wiring: LED feeds, replaceable LEDs, LED driver and the dimmer control box'
+  challenge: 'The Tel Aviv Museum''s collection of 17 miniatures from Helena Rubinstein, over 100 years old, needed a lighting solution for a permanent 20-year exhibit. The LED lighting had to bring out the miniatures'' colors while minimizing harmful UV light that could damage the fragile materials. Each room had its own needs: some take natural light through windows, others need specific interior lighting. Everything had to be installed without drilling or permanently altering the original structures, and stay easy for museum staff to replace and control.'
+  solution: Together with an electronics engineer, we developed custom LED circuits tailored to each room, with about 12 LEDs per room. Each LED sits on its own PCB that doubles as a heat sink, with connectors running through the miniature ceilings for discreet power. To preserve the original wood we reused the existing lighting infrastructure in some rooms, and in others designed custom plastic holders with foam to prevent damage.
+  process: All LEDs connect to a six-channel dimming system, so the light balance of each room can be tuned, whether for natural light reflections or enclosed spaces. The result protects the rooms, raises their visual impact and stays easy to maintain.
+  role: 
+  duration: 
+  context: Tel Aviv Museum of Art, permanent exhibit
+  tools: Custom LED PCBs, 3D-printed holders, 6-channel dimmer, COB LEDs
+  facts:
+  - label: Rooms
+    value: 17 miniatures, over 100 years old
+  - label: LEDs
+    value: About 12 per room
+  - label: Control
+    value: 6-channel dimming
+  - label: Lifetime
+    value: Permanent 20-year exhibit
+  links: []

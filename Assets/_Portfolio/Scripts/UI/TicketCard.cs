@@ -13,7 +13,9 @@ namespace Portfolio
     /// </summary>
     public class TicketCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerClickHandler
     {
-        public static readonly Vector2 Size = new(150, 170); // BG_Card is 300×340 at 2×
+        static readonly Vector2 DesignSize = new(150, 170); // BG_Card is 300×340 at 2×
+        const float Scale = 1.5f;                           // the panel's text is large; match it
+        public static readonly Vector2 Size = DesignSize * Scale;
 
         RectTransform body;
         CanvasGroup bodyGroup;
@@ -45,9 +47,18 @@ namespace Portfolio
             var t = Create(parent, skin, project.title, meta, "Art_Project_Stroke", new Color32(227, 232, 242, 255), index, font);
             if (project.cover)
             {
-                t.art.sprite = project.cover; // a real cover beats the generic line drawing
+                // A real cover beats the generic line drawing; crop it to fill the art window.
+                t.art.sprite = project.cover;
                 t.art.color = Color.white;
+                t.art.preserveAspect = false;
                 t.artDraw.enabled = false;
+                var window = (RectTransform)t.art.transform.parent;
+                window.gameObject.AddComponent<RectMask2D>().padding = new Vector4(0, 2, 0, 0); // keep the divider line
+                var ar = t.art.rectTransform;
+                ar.anchorMin = ar.anchorMax = ar.pivot = new Vector2(0.5f, 0.5f);
+                var fit = t.art.gameObject.AddComponent<AspectRatioFitter>();
+                fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                fit.aspectRatio = project.cover.rect.width / project.cover.rect.height;
             }
             t.onClick = onClick;
             return t;
@@ -64,10 +75,16 @@ namespace Portfolio
             t.ink = skin.ink;
             t.accent = skin.accent;
 
-            t.shadow = Img("Shadow", root, skin.Get("Ticket_Shadow"));
+            // Everything is laid out at the PSD's design size, then scaled up as one piece.
+            var scaled = UIObj("Scaled", root);
+            scaled.anchorMin = scaled.anchorMax = scaled.pivot = new Vector2(0.5f, 0.5f);
+            scaled.sizeDelta = DesignSize;
+            scaled.localScale = new Vector3(Scale, Scale, 1f);
+
+            t.shadow = Img("Shadow", scaled, skin.Get("Ticket_Shadow"));
             Stretch(t.shadow.rectTransform, -8, -8, -2, -16);
 
-            t.body = UIObj("Body", root);
+            t.body = UIObj("Body", scaled);
             Stretch(t.body);
             t.bodyGroup = t.body.gameObject.AddComponent<CanvasGroup>();
 
@@ -87,11 +104,16 @@ namespace Portfolio
             var titleText = Text("Title", t.body, font, title, 17, FontStyles.Bold, skin.ink);
             Stretch(titleText.rectTransform, 12, 10, 88, 58);
             titleText.alignment = TextAlignmentOptions.BottomLeft;
+            titleText.enableAutoSizing = true; // long names ("ChatBaker Hidden Objects") shrink instead of cutting off
+            titleText.fontSizeMin = 10;
+            titleText.fontSizeMax = 17;
             titleText.overflowMode = TextOverflowModes.Ellipsis;
             var metaText = Text("Meta", t.body, font, meta, 10, FontStyles.Normal, skin.inkSoft);
             Stretch(metaText.rectTransform, 12, 10, 114, 42);
             metaText.alignment = TextAlignmentOptions.TopLeft;
             metaText.characterSpacing = 8;
+            metaText.textWrappingMode = TextWrappingModes.NoWrap;
+            metaText.overflowMode = TextOverflowModes.Ellipsis;
 
             var perf = Img("Perforation", t.body, skin.Get("Perforation")).rectTransform;
             perf.anchorMin = perf.anchorMax = new Vector2(0.5f, 0);

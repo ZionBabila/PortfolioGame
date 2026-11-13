@@ -39,6 +39,18 @@ namespace Portfolio
         StrokeDraw logoDraw, signatureDraw;
 
         public bool IsOpen => open;
+
+        /// <summary>The station whose letter is open (null when closed). QuickNav lights its icon from this.</summary>
+        public static StationData Current { get; private set; }
+        public static event System.Action CurrentChanged;
+
+        // The project enters Play mode without a domain reload, so statics must be reset by hand.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
+        {
+            Current = null;
+            CurrentChanged = null;
+        }
         bool Skinned => skin && skin.IsReady;
 
         void Awake()
@@ -79,9 +91,11 @@ namespace Portfolio
                 cr.anchoredPosition = new Vector2(-26, -30);
             }
 
-            var logo = Decoration("Logo_Stroke", new Vector2(1, 1), new Vector2(-84, -32), Color.white);
+            var logo = Decoration("Logo_Stroke", new Vector2(1, 1), new Vector2(-88, -26), Color.white);
+            logo.rectTransform.sizeDelta *= 1.6f;
             logoDraw = StrokeDraw.On(logo, 0.9f);
             var sign = Decoration("Signature_Stroke", new Vector2(0, 0), new Vector2(40, 22), Color.white);
+            sign.rectTransform.sizeDelta *= 1.3f;
             signatureDraw = StrokeDraw.On(sign, 1.6f);
         }
 
@@ -149,6 +163,8 @@ namespace Portfolio
             if (scroll) scroll.verticalNormalizedPosition = 1f;
             open = true;
             group.blocksRaycasts = true;
+            Current = data;
+            CurrentChanged?.Invoke();
         }
 
         /// <summary>Games and projects become tickets in a wrapping grid; every other link becomes a rubber stamp.</summary>
@@ -211,6 +227,11 @@ namespace Portfolio
             ProjectViewer.HideCurrent();
             open = false;
             group.blocksRaycasts = false;
+            if (Current)
+            {
+                Current = null;
+                CurrentChanged?.Invoke();
+            }
         }
 
         void Update()

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a231eea62523459793eb6f5551be206c, type: 3}
+  m_Name: Babilanur
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.ProjectData
+  title: Babilanur
+  tagline: Interactive lighting fixtures you shape through touch.
+  year: 
+  category: "Lighting \xB7 Interactive"
+  cover: {fileID: 21300000, guid: 596faf1e5cba0224c97a8fbe63563f21, type: 3}
+  accent: {r: 0.72156864, g: 0.5254902, b: 0.16862746, a: 1}
+  gallery:
+  - image: {fileID: 21300000, guid: 407638f85dd138c46b1a33cce3a06fd6, type: 3}
+    caption: 
+  - image: {fileID: 21300000, guid: 82478331e0b592a4da674a3067e716cd, type: 3}
+    caption: Hand-finished glass and brass
+  - image: {fileID: 21300000, guid: f01a8d574f9df5f4aa2a2b0effa9d081, type: 3}
+    caption: 
+  - image: {fileID: 21300000, guid: e0a6156c07aa3e74393521a00b110cf6, type: 3}
+    caption: In the workshop
+  - image: {fileID: 21300000, guid: ca088071186f2dd43ab5371286d300e2, type: 3}
+    caption: 
+  - image: {fileID: 21300000, guid: f05679aa5fb918f4591684c00dd4a1d3, type: 3}
+    caption: 
+  explodedView: {fileID: 0}
+  explodedCaption: 
+  challenge: 
+  solution: Interactive lighting fixtures that invite the user to experience light in a personal way, shaping it through touch. Each fixture is a unique creation, combining meticulous craftsmanship with natural materials such as wood, iron and metals, alongside advanced technology like 3D printing and microcontrollers.
+  process: The vision behind each piece is to bring the magic of light to life, not just as a means of illumination, but as an interactive partner in the space, evoking a sense of presence, as if you are not alone, but have something you can communicate with.
+  role: 
+  duration: 
+  context: 
+  tools: Wood, iron, metals, 3D printing, microcontrollers
+  facts:
+  - label: Interaction
+    value: First pet turns it on, each extra pet adds brightness, a double tap turns it off
+  links: []

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a231eea62523459793eb6f5551be206c, type: 3}
+  m_Name: AlexaMic
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.ProjectData
+  title: Arri Alexa Camera Mic
+  tagline: A camera microphone that plugs straight into the ARRI ALEXA Mini's line-level input.
+  year: 
+  category: "Product design \xB7 Audio"
+  cover: {fileID: 21300000, guid: d140a13ad5c2f0b4ba1b2a75863937bc, type: 3}
+  accent: {r: 0.41960785, g: 0.54901963, b: 0.68235296, a: 1}
+  gallery:
+  - image: {fileID: 21300000, guid: 091831c47d41b4c4385245c3ca6b59f4, type: 3}
+    caption: 
+  - image: {fileID: 21300000, guid: 1a7155428b1123d43a46978a5a9bbd9d, type: 3}
+    caption: 
+  - image: {fileID: 21300000, guid: 67f2b8550c7870e4d8bd9d39391785cc, type: 3}
+    caption: 
+  explodedView: {fileID: 21300000, guid: 02aff5d02c04a8f40b9f208370a4ac2e, type: 3}
+  explodedCaption: 3D-printed body, main PCB, ready-made XLR housing and camera mount
+  challenge: ARRI released the ALEXA Mini camera with only a LINE level audio input, making it challenging to directly connect a microphone for in-camera sound. Additionally, an elegant physical connection was needed to integrate smoothly with the camera's accessories.
+  solution: I developed a camera microphone with a built-in LINE level amplifier, allowing direct connection without external sound syncing. The microphone body was designed to screw directly onto the XLR plug, creating a unified, sleek appearance that blends seamlessly with the camera setup.
+  process: 'To reduce production costs, I used ready-made components like the XLR plug. Since the product is intended for small production runs, 3D printing the ergonomic body saves on expensive injection moulds.
+
+
+    Together with an electronics engineer, we ensured uncompromising sound quality by selecting a wide-frequency-range microphone capsule and integrating a compact preamp. We also provided a set of cables for different ALEXA models, so power and audio both run through a single connector.'
+  role: 
+  duration: 
+  context: 
+  tools: 3D printing, custom PCB and preamp, ready-made XLR housing
+  facts:
+  - label: Parts
+    value: 3D-printed body, main PCB, XLR housing, camera mount
+  - label: Electronics
+    value: With an electronics engineer
+  links: []

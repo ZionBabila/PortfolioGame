@@ -40,6 +40,8 @@ namespace Portfolio
         float shown;
         float closeAt = -1f;
 
+        UISkin skin;
+
         void Awake()
         {
             answerTemplate.gameObject.SetActive(false);
@@ -48,6 +50,39 @@ namespace Portfolio
             group.alpha = 0f;
             group.blocksRaycasts = false;
             IsOpen = false;
+
+            skin = UISkin.Default;
+            if (skin && skin.IsReady) ApplySkin();
+            else skin = null;
+        }
+
+        /// <summary>The card becomes a typed note on paper; answers and "bye" are rubber stamps.</summary>
+        void ApplySkin()
+        {
+            if (card.TryGetComponent<Image>(out var paper))
+            {
+                paper.sprite = skin.Sliced("BG_Paper", 48);
+                paper.type = Image.Type.Sliced;
+                paper.color = Color.white;
+            }
+            foreach (var o in card.GetComponents<Outline>()) o.enabled = false;
+            var drop = card.gameObject.AddComponent<Shadow>();
+            drop.effectColor = new Color(skin.ink.r, skin.ink.g, skin.ink.b, 0.25f);
+            drop.effectDistance = new Vector2(5, -8);
+
+            if (speakerLabel) speakerLabel.color = skin.accent;
+            if (greetingLabel) greetingLabel.color = skin.inkSoft;
+            if (questionLabel) questionLabel.color = skin.ink;
+            if (replyLabel) replyLabel.color = skin.inkSoft;
+
+            StampButton.Apply(goodbyeButton.gameObject, skin, 0);
+            if (runAwayButton.TryGetComponent<Image>(out var runBg)) runBg.color = new Color(1, 1, 1, 0);
+            var runLabel = runAwayButton.GetComponentInChildren<TMP_Text>(true);
+            if (runLabel)
+            {
+                runLabel.color = skin.inkSoft;
+                runLabel.fontStyle = FontStyles.Italic | FontStyles.Underline;
+            }
         }
 
         public void Show(HRQuestionSet set, HRQuestion question, string greeting, Action closed)
@@ -73,6 +108,7 @@ namespace Portfolio
                 b.gameObject.SetActive(true);
                 SetButtonText(b, question.answers[i].text);
                 b.onClick.AddListener(() => Answer(index));
+                if (skin) StampButton.Apply(b.gameObject, skin, i + 1);
                 spawned.Add(b);
             }
             answersRoot.gameObject.SetActive(true);

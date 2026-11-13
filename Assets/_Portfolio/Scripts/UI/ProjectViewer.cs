@@ -110,7 +110,8 @@ namespace Portfolio
                     var b = Instantiate(linkTemplate, content);
                     b.gameObject.SetActive(true);
                     b.Bind(link);
-                    b.GetComponent<Image>().color = accent;
+                    if (skin) StampButton.Apply(b.gameObject, skin, spawned.Count);
+                    else b.GetComponent<Image>().color = accent;
                     spawned.Add(b.gameObject);
                 }
             }
@@ -265,7 +266,43 @@ namespace Portfolio
             x.alignment = TextAlignmentOptions.Center;
             Stretch(x.rectTransform);
 
+            skin = UISkin.Default;
+            if (skin && skin.IsReady) ApplySkin(closeImg, closeBtn);
+            else skin = null;
+
             Layout();
+        }
+
+        UISkin skin;
+
+        /// <summary>Paper card, PSD close X and the timeline player's prev/next buttons.</summary>
+        void ApplySkin(Image closeImg, Button closeBtn)
+        {
+            var paper = card.GetComponent<Image>();
+            paper.sprite = skin.Sliced("BG_Paper", 48);
+            paper.type = Image.Type.Sliced;
+            paper.color = Color.white;
+            foreach (var o in card.GetComponents<Outline>()) o.enabled = false;
+            var drop = card.gameObject.AddComponent<Shadow>();
+            drop.effectColor = new Color(skin.ink.r, skin.ink.g, skin.ink.b, 0.3f);
+            drop.effectDistance = new Vector2(6, -10);
+            media.GetComponent<Image>().color = skin.paperEdge;
+            accentBar.gameObject.SetActive(false);
+
+            SkinGlyphButton(closeBtn, closeImg, "Btn_Close", new Vector2(48, 48));
+            SkinGlyphButton(prev, prev.GetComponent<Image>(), "Btn_Prev", new Vector2(64, 64));
+            SkinGlyphButton(next, next.GetComponent<Image>(), "Btn_Next", new Vector2(64, 64));
+        }
+
+        void SkinGlyphButton(Button b, Image img, string layer, Vector2 size)
+        {
+            foreach (var t in b.GetComponentsInChildren<TMP_Text>(true)) t.gameObject.SetActive(false);
+            foreach (var o in b.GetComponents<Outline>()) o.enabled = false;
+            img.color = Color.white;
+            img.preserveAspect = true;
+            b.transition = Selectable.Transition.None;
+            SpriteStates.On(img, skin.Get(layer + "_Normal"), skin.Get(layer + "_Hover"));
+            ((RectTransform)b.transform).sizeDelta = size;
         }
 
         Button RoundButton(string name, Transform parent, string glyph, Vector2 anchor, Vector2 offset)

@@ -14,12 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Portfolio.StationData
   title: Projects
   kind: 1
-  subtitle: Selected work
-  body: 'Highlights of projects: what it is, your role, tech used, result.'
+  subtitle: Industrial design
+  body: 'Industrial design and lighting: products, a museum installation and interactive pieces. Open a ticket to see the story behind each one.'
   image: {fileID: 0}
   accent: {r: 0.42, g: 0.62, b: 0.95, a: 1}
   links:
   - label: Project repo
     url: https://github.com/ZionBabila
   projects:
-  - {fileID: 11400000, guid: 83d61e7582b1427ba606a67fd252b658, type: 2}
+  - {fileID: 11400000, guid: 335eb27ee65ac0c4fb4c7d651359160f, type: 2}
+  - {fileID: 11400000, guid: fdd910aad0b80e14abe5fbd773c6d5b3, type: 2}
+  - {fileID: 11400000, guid: eea2c345c0dcd3e4cb2129ff18cf9dca, type: 2}
+  - {fileID: 11400000, guid: 697f5f5e5044c6748968596004202077, type: 2}
+  - {fileID: 11400000, guid: 0c55ef4a797d7e548befe70470d10fb2, type: 2}

@@ -18,6 +18,7 @@ namespace Portfolio
             player.ArrivedAtStation += s => panel.Show(s.data);
             player.StartedMoving += panel.Hide;
             if (quickNav) quickNav.Build(stations, player);
+            if (panel) HudSkin.Apply(panel.GetComponentInParent<Canvas>().rootCanvas.transform, UISkin.Default);
         }
 
         void Update()
