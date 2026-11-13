@@ -11,6 +11,16 @@ namespace Portfolio.EditorTools
     /// base color into its "&lt;name&gt;_Toon" material, warm-tint the textured ones, and set the Workshop Letters ink
     /// outline and shade. Each run is recorded in the console.
     /// </summary>
+    /// <summary>Runs <see cref="ToonColorSync.Sync"/> by itself when Blender writes a new Workshop_palette.json.</summary>
+    class ToonPaletteWatcher : AssetPostprocessor
+    {
+        static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] movedFrom)
+        {
+            if (!imported.Any(p => p.EndsWith("/Workshop_palette.json"))) return;
+            EditorApplication.delayCall += ToonColorSync.Sync; // after the import finishes
+        }
+    }
+
     public static class ToonColorSync
     {
         const string ModelPath = "Assets/_Portfolio/Art/Models/Workshop.blend";

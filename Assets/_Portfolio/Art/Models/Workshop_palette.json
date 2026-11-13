@@ -1,4 +1,5 @@
 {
+ "exported": "2026-11-13T22:13:17",
  "materials": {
   "Cork": {
    "hex": "E7E7E7",
@@ -49,7 +50,7 @@
    "textured": false
   },
   "M_EpoxyFloor": {
-   "hex": "8F8577",
+   "hex": "8A8782",
    "textured": false
   },
   "M_Fabric": {
@@ -137,11 +138,11 @@
    "textured": false
   },
   "Material": {
-   "hex": "C9B79C",
+   "hex": "A09D97",
    "textured": false
   },
   "Poliigon_ConcreteFloorPoured_7656_2K": {
-   "hex": "C9B79C",
+   "hex": "A09D97",
    "textured": false
   },
   "Poliigon_PlasterPainted_7664_1K": {
