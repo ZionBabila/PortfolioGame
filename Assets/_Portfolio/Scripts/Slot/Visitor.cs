@@ -34,19 +34,22 @@ namespace Portfolio.Slot
             Changed?.Invoke();
         }
 
+        // On the tech-art link (?for=techart) the leads are tech-art leads.
+        static bool TechArt => Profile.Current == Profile.TechArt;
+
         public static string Title(VisitorRole role) => role switch
         {
             VisitorRole.HR => "HR",
-            VisitorRole.TeamLead => "Team Lead",
-            VisitorRole.HeadOfDepartment => "Head of Department",
+            VisitorRole.TeamLead => TechArt ? "Tech Art Team Lead" : "Team Lead",
+            VisitorRole.HeadOfDepartment => TechArt ? "Head of Tech Art" : "Head of Department",
             _ => "Just visiting",
         };
 
         public static string Blurb(VisitorRole role) => role switch
         {
             VisitorRole.HR => "You care about people, culture and fit.",
-            VisitorRole.TeamLead => "You want to see how I build things.",
-            VisitorRole.HeadOfDepartment => "You're looking for impact and results.",
+            VisitorRole.TeamLead => TechArt ? "You want to see how I build UI in Unity." : "You want to see how I build things.",
+            VisitorRole.HeadOfDepartment => TechArt ? "You need a tech artist who makes the team faster." : "You're looking for impact and results.",
             _ => "Curious. No agenda.",
         };
     }

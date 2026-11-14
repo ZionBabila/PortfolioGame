@@ -16,14 +16,18 @@ namespace Portfolio.Slot
         [TextArea(2, 4)] public string factHR;
         [TextArea(2, 4)] public string factTeamLead;
         [TextArea(2, 4)] public string factHead;
+        [Header("Tech-art link (?for=techart): Tech Art Team Lead / Head of Tech Art")]
+        [TextArea(2, 4)] public string factTechLead;
+        [TextArea(2, 4)] public string factTechHead;
 
         public string FactFor(VisitorRole role)
         {
+            bool techArt = Profile.Current == Profile.TechArt;
             var s = role switch
             {
                 VisitorRole.HR => factHR,
-                VisitorRole.TeamLead => factTeamLead,
-                VisitorRole.HeadOfDepartment => factHead,
+                VisitorRole.TeamLead => techArt && !string.IsNullOrWhiteSpace(factTechLead) ? factTechLead : factTeamLead,
+                VisitorRole.HeadOfDepartment => techArt && !string.IsNullOrWhiteSpace(factTechHead) ? factTechHead : factHead,
                 _ => fact,
             };
             return string.IsNullOrWhiteSpace(s) ? fact : s;
@@ -44,6 +48,14 @@ namespace Portfolio.Slot
         public Sprite window;
         public Sprite lever;
         public Sprite energyIcon;
+
+        [Header("Sound (synthesized by Art/Audio/tools/slot_sfx.py)")]
+        public AudioClip pullSound;
+        public AudioClip tickSound;
+        public AudioClip stopSound;
+        public AudioClip winSound;
+        public AudioClip emptySound;
+        public AudioClip catchSound;
 
         [Header("Energy")]
         public int startEnergy = 3;

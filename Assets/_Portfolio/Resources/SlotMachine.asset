@@ -19,40 +19,58 @@ MonoBehaviour:
     factHR: Running my own brand for seven years taught me to own a project end to end.
     factTeamLead: Babilanur lamps combine handcrafted wood and metal, 3D printing and microcontrollers.
     factHead: Babilanur has been my own product brand since 2017, from concept to fabrication.
+    factTechLead: 'I build UI to the anchor and pivot: one Canvas Scaler setup serves both 16:9 and 9:16.'
+    factTechHead: 'One responsive build runs on desktop and phones: fewer builds for the team to maintain.'
   - id: Controller
     icon: {fileID: 21300000, guid: 2f200b569080cb94790e0c421dff2f22, type: 3}
     fact: I built five games at Shenkar, one of them in 48 hours at Global Game Jam.
     factHR: At Global Game Jam I shipped a full game in 48 hours with a team.
     factTeamLead: In Unity I script player controllers, enemy behavior and animation state machines.
     factHead: Five games in one program, finished with highest honors.
+    factTechLead: I animate UI with tweens, CanvasGroup fades and Animator states, and I can trace a broken animation path through the hierarchy.
+    factTechHead: 'I find what''s broken before players do: missing sprites, dead animation paths, lost references.'
   - id: Chip
     icon: {fileID: 21300000, guid: d990ad4d7fe8c724cb4b18d81eb65777, type: 3}
     fact: I design my own PCBs, and took a product through FCC and CE certification.
     factHR: I work directly with engineers and manufacturers, all the way to production.
     factTeamLead: I design PCBs and custom electronics around sensors and microcontrollers.
     factHead: I took a product through FCC and CE certification and into production.
+    factTechLead: Overlays get their own sorting canvas, fades go through CanvasGroups, scrolling lists clip with RectMask2D.
+    factTechHead: 'I build tools so artists don''t wait: generators, importers and one-click syncs from Photoshop and Blender.'
   - id: Camera
     icon: {fileID: 21300000, guid: 80ffa6fec3064fb41bfccb4834dfcda0, type: 3}
     fact: Before design, I was a cinema camera technician on film sets.
     factHR: Years on film sets taught me to keep calm and work well in a big crew.
     factTeamLead: As a camera technician I learned to troubleshoot complex rigs under pressure.
     factHead: I built and priced equipment packages for film productions and led the warehouse team.
+    factTechLead: 'TextMeshPro done right: SDF font assets, a real bold weight and fallbacks, Hebrew included.'
+    factTechHead: Everything in this portfolio, from the art pipeline to the WebGL build, is my own tech-art work.
   - id: Frame
     icon: {fileID: 21300000, guid: f8f58ed3e7ae41442b9a0312ef166fe8, type: 3}
     fact: I lit 17 century-old miniature rooms for the Tel Aviv Museum of Art.
     factHR: 'A museum trusted me with 100-year-old miniatures: careful, patient work.'
     factTeamLead: Custom LED circuits for each of 17 rooms, installed without drilling a single hole.
     factHead: My lighting is part of a permanent 20-year exhibit at the Tel Aviv Museum of Art.
+    factTechLead: 'Nine-slicing at runtime: one paper sprite stretches into every panel, button and ticket.'
+    factTechHead: I match a design spec value for value, then make it move.
   - id: Wrench
     icon: {fileID: 21300000, guid: 905b39a7149822149b6687b4b83e8f98, type: 3}
     fact: I finished Game Development at Shenkar with highest honors, and I still build everything by hand.
     factHR: 'I''m a maker: I learn by building things with my own hands.'
     factTeamLead: 'SolidWorks, Blender, Unity and Arduino: I go from CAD to code.'
     factHead: 'Industrial designer and game developer in one: I design it, build it and ship it.'
+    factTechLead: 'My art comes straight from Photoshop: the PSD importer turns named layers into sprites I wire up in code.'
+    factTechHead: 'I speak both artist and programmer: I turn a mockup into a working, animated Unity screen.'
   body: {fileID: 21300000, guid: dff9bbda91903904182540b690445b8c, type: 3}
   window: {fileID: 21300000, guid: 751a88196f2f8394884f8cc987ee6dc9, type: 3}
   lever: {fileID: 21300000, guid: 3fc08e6198c449b4cba1e16fc2581fc3, type: 3}
   energyIcon: {fileID: 21300000, guid: bf4c581aba4f58e46aaf8d767111eb9a, type: 3}
+  pullSound: {fileID: 8300000, guid: d15814d548a38f344859090406a6aa3b, type: 3}
+  tickSound: {fileID: 8300000, guid: 3b28ee1de98877640946ac9e75fa381d, type: 3}
+  stopSound: {fileID: 8300000, guid: ed12869e7fd962c48aa0360f76dd7190, type: 3}
+  winSound: {fileID: 8300000, guid: 7635c2120df58e84598c794a9b6ca821, type: 3}
+  emptySound: {fileID: 8300000, guid: f932faef5e8275140b9dbddfb03e62d5, type: 3}
+  catchSound: {fileID: 8300000, guid: 3bd832a9505dcc047950413b3853c209, type: 3}
   startEnergy: 3
   spinCost: 1
   energyPerCatch: 2

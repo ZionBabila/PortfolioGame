@@ -290,6 +290,7 @@ namespace Portfolio
             accentBar.gameObject.SetActive(false);
 
             SkinGlyphButton(closeBtn, closeImg, "Btn_Close", new Vector2(48, 48));
+            HitArea.Grow(closeBtn, 140f);
             SkinGlyphButton(prev, prev.GetComponent<Image>(), "Btn_Prev", new Vector2(64, 64));
             SkinGlyphButton(next, next.GetComponent<Image>(), "Btn_Next", new Vector2(64, 64));
         }

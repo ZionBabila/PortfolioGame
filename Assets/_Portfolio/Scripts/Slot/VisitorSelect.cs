@@ -31,7 +31,10 @@ namespace Portfolio.Slot
         TMP_FontAsset typeFont, labelFont;
         CanvasGroup group;
         TMP_Text hudText, youTag;
-        bool open;
+        bool open, laidOutPortrait, laidOut;
+        RectTransform letterRect;
+        GridLayoutGroup roleGrid;
+        TMP_Text titleText;
 
         public static void Install(Transform canvas, ClickToMove player)
         {
@@ -50,7 +53,27 @@ namespace Portfolio.Slot
         void Show() { open = true; group.blocksRaycasts = true; }
         void Hide() { open = false; group.blocksRaycasts = false; }
 
-        void Update() => group.alpha = Mathf.MoveTowards(group.alpha, open ? 1f : 0f, Time.unscaledDeltaTime * 5f);
+        void Update()
+        {
+            group.alpha = Mathf.MoveTowards(group.alpha, open ? 1f : 0f, Time.unscaledDeltaTime * 5f);
+            if (!laidOut || laidOutPortrait != Aspect.IsPortrait) Layout();
+        }
+
+        /// <summary>Phones (9:16): the letter takes the full width and the four roles stack as big, thumb-sized cards.</summary>
+        void Layout()
+        {
+            laidOut = true;
+            laidOutPortrait = Aspect.IsPortrait;
+            bool p = laidOutPortrait;
+            letterRect.anchorMin = p ? new Vector2(0.04f, 0.06f) : new Vector2(0.18f, 0.1f);
+            letterRect.anchorMax = p ? new Vector2(0.96f, 0.94f) : new Vector2(0.82f, 0.9f);
+            letterRect.offsetMin = letterRect.offsetMax = Vector2.zero;
+            roleGrid.cellSize = p ? new Vector2(860, 210) : new Vector2(460, 150);
+            roleGrid.spacing = p ? new Vector2(0, 30) : new Vector2(28, 24);
+            roleGrid.constraint = p ? GridLayoutGroup.Constraint.FixedColumnCount : GridLayoutGroup.Constraint.Flexible;
+            roleGrid.constraintCount = 1;
+            titleText.fontSize = p ? 66 : 54;
+        }
 
         void Pick(VisitorRole role)
         {
@@ -121,6 +144,7 @@ namespace Portfolio.Slot
             overlay.gameObject.AddComponent<Image>().color = new Color(ink.r, ink.g, ink.b, 0.8f);
 
             var letter = UIObj("Letter", overlay);
+            letterRect = letter;
             letter.anchorMin = new Vector2(0.18f, 0.1f); letter.anchorMax = new Vector2(0.82f, 0.9f);
             letter.offsetMin = letter.offsetMax = Vector2.zero;
             var limg = letter.gameObject.AddComponent<Image>();
@@ -135,11 +159,13 @@ namespace Portfolio.Slot
             kicker.text = "ZION BABILA  ·  STUDIO"; kicker.characterSpacing = 12;
             var title = Text("Title", col, 54, FontStyles.Bold, ink, TextAlignmentOptions.Left, typeFont);
             title.text = "Welcome to my studio.";
+            titleText = title;
             var sub = Text("Sub", col, 30, FontStyles.Italic, soft, TextAlignmentOptions.Left, typeFont);
             sub.text = "Who are you today? The fortune machine will tell you what you came to hear.";
 
             var grid = UIObj("Roles", col);
             var g = grid.gameObject.AddComponent<GridLayoutGroup>();
+            roleGrid = g;
             g.cellSize = new Vector2(460, 150); g.spacing = new Vector2(28, 24); g.childAlignment = TextAnchor.UpperCenter;
             grid.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
             int i = 0;

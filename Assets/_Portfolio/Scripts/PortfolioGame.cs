@@ -25,6 +25,7 @@ namespace Portfolio
             {
                 Slot.SlotMachineUI.Install(panel.GetComponentInParent<Canvas>().rootCanvas.transform);
                 Slot.ZionRunner.Spawn(player);
+                Slot.FortuneMachineSpot.Attach(player); // the machine standing in the studio opens it too
                 // Who's visiting: HR, Team Lead, Head of Department or just visiting (asked on the first visit).
                 Slot.VisitorSelect.Install(panel.GetComponentInParent<Canvas>().rootCanvas.transform, player);
             }

@@ -25,47 +25,60 @@ namespace Portfolio.EditorTools
             };
         }
 
-        // Icon file → what its triple reveals: to someone just visiting, to HR, to a team lead, to a head of department.
+        // Icon file → what its triple reveals: to someone just visiting, to HR, to a team lead, to a head of department,
+        // and on the tech-art link to a Tech Art Team Lead and a Head of Tech Art.
         // All from the CVs.
-        static readonly (string id, string fact, string hr, string lead, string head)[] Facts =
+        static readonly (string id, string fact, string hr, string lead, string head, string techLead, string techHead)[] Facts =
         {
             ("Lamp",
                 "Since 2017 I've run my own lighting brand, Babilanur: lamps you control by touch.",
                 "Running my own brand for seven years taught me to own a project end to end.",
                 "Babilanur lamps combine handcrafted wood and metal, 3D printing and microcontrollers.",
-                "Babilanur has been my own product brand since 2017, from concept to fabrication."),
+                "Babilanur has been my own product brand since 2017, from concept to fabrication.",
+                "I build UI to the anchor and pivot: one Canvas Scaler setup serves both 16:9 and 9:16.",
+                "One responsive build runs on desktop and phones: fewer builds for the team to maintain."),
             ("Controller",
                 "I built five games at Shenkar, one of them in 48 hours at Global Game Jam.",
                 "At Global Game Jam I shipped a full game in 48 hours with a team.",
                 "In Unity I script player controllers, enemy behavior and animation state machines.",
-                "Five games in one program, finished with highest honors."),
+                "Five games in one program, finished with highest honors.",
+                "I animate UI with tweens, CanvasGroup fades and Animator states, and I can trace a broken animation path through the hierarchy.",
+                "I find what's broken before players do: missing sprites, dead animation paths, lost references."),
             ("Chip",
                 "I design my own PCBs, and took a product through FCC and CE certification.",
                 "I work directly with engineers and manufacturers, all the way to production.",
                 "I design PCBs and custom electronics around sensors and microcontrollers.",
-                "I took a product through FCC and CE certification and into production."),
+                "I took a product through FCC and CE certification and into production.",
+                "Overlays get their own sorting canvas, fades go through CanvasGroups, scrolling lists clip with RectMask2D.",
+                "I build tools so artists don't wait: generators, importers and one-click syncs from Photoshop and Blender."),
             ("Camera",
                 "Before design, I was a cinema camera technician on film sets.",
                 "Years on film sets taught me to keep calm and work well in a big crew.",
                 "As a camera technician I learned to troubleshoot complex rigs under pressure.",
-                "I built and priced equipment packages for film productions and led the warehouse team."),
+                "I built and priced equipment packages for film productions and led the warehouse team.",
+                "TextMeshPro done right: SDF font assets, a real bold weight and fallbacks, Hebrew included.",
+                "Everything in this portfolio, from the art pipeline to the WebGL build, is my own tech-art work."),
             ("Frame",
                 "I lit 17 century-old miniature rooms for the Tel Aviv Museum of Art.",
                 "A museum trusted me with 100-year-old miniatures: careful, patient work.",
                 "Custom LED circuits for each of 17 rooms, installed without drilling a single hole.",
-                "My lighting is part of a permanent 20-year exhibit at the Tel Aviv Museum of Art."),
+                "My lighting is part of a permanent 20-year exhibit at the Tel Aviv Museum of Art.",
+                "Nine-slicing at runtime: one paper sprite stretches into every panel, button and ticket.",
+                "I match a design spec value for value, then make it move."),
             ("Wrench",
                 "I finished Game Development at Shenkar with highest honors, and I still build everything by hand.",
                 "I'm a maker: I learn by building things with my own hands.",
                 "SolidWorks, Blender, Unity and Arduino: I go from CAD to code.",
-                "Industrial designer and game developer in one: I design it, build it and ship it."),
+                "Industrial designer and game developer in one: I design it, build it and ship it.",
+                "My art comes straight from Photoshop: the PSD importer turns named layers into sprites I wire up in code.",
+                "I speak both artist and programmer: I turn a mockup into a working, animated Unity screen."),
         };
 
         /// <summary>Also runs when the asset predates the per-visitor lines.</summary>
         static bool NeedsBuild()
         {
             var d = AssetDatabase.LoadAssetAtPath<SlotMachineData>(AssetPath);
-            return !d || d.symbols.Count == 0 || d.symbols.Any(s => string.IsNullOrEmpty(s.factHR));
+            return !d || d.symbols.Count == 0 || d.symbols.Any(s => string.IsNullOrEmpty(s.factHR) || string.IsNullOrEmpty(s.factTechLead)) || !d.pullSound;
         }
 
         [MenuItem("Portfolio/Slot/Build Slot Machine Content")]
@@ -90,6 +103,9 @@ namespace Portfolio.EditorTools
             if (fresh) { data = ScriptableObject.CreateInstance<SlotMachineData>(); AssetDatabase.CreateAsset(data, AssetPath); }
 
             data.body = S("Slot_Body"); data.window = S("Slot_Window"); data.lever = S("Slot_Lever"); data.energyIcon = S("Slot_Energy");
+            AudioClip A(string n) => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/_Portfolio/Audio/Slot/{n}.wav");
+            data.pullSound = A("Slot_Pull"); data.tickSound = A("Slot_Tick"); data.stopSound = A("Slot_Stop");
+            data.winSound = A("Slot_Win"); data.emptySound = A("Slot_Empty"); data.catchSound = A("Slot_Catch");
             var existing = data.symbols.ToDictionary(s => s.id, s => s);
             static string Keep(string edited, string seed) => string.IsNullOrEmpty(edited) ? seed : edited; // keep edited text
             data.symbols = Facts.Select(f =>
@@ -103,6 +119,8 @@ namespace Portfolio.EditorTools
                     factHR = Keep(old?.factHR, f.hr),
                     factTeamLead = Keep(old?.factTeamLead, f.lead),
                     factHead = Keep(old?.factHead, f.head),
+                    factTechLead = Keep(old?.factTechLead, f.techLead),
+                    factTechHead = Keep(old?.factTechHead, f.techHead),
                 };
             }).ToList();
 

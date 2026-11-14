@@ -28,6 +28,7 @@ namespace Portfolio.Slot
 
         bool open, spinning;
         int misses;
+        AudioSource sfx;
         CanvasGroup group;
         RectTransform machine, lever, reveal, factsCard;
         readonly Reel[] reels = new Reel[3];
@@ -98,10 +99,18 @@ namespace Portfolio.Slot
             if (!Energy.TrySpend(data.spinCost))
             {
                 hintText.text = "Out of energy. Catch Zion in the studio!";
+                Play(data.emptySound);
                 StartCoroutine(Shake(machine));
                 return;
             }
             StartCoroutine(Spin());
+        }
+
+        void Play(AudioClip clip, float volume = 1f, float pitch = 1f)
+        {
+            if (!clip || !sfx) return;
+            sfx.pitch = pitch;
+            sfx.PlayOneShot(clip, volume);
         }
 
         IEnumerator Spin()
@@ -110,6 +119,7 @@ namespace Portfolio.Slot
             reveal.gameObject.SetActive(false);
             hintText.text = "";
             var result = PickResult(out bool triple);
+            Play(data.pullSound);
             StartCoroutine(LeverPull());
             for (int i = 0; i < 3; i++) StartCoroutine(SpinReel(reels[i], result[i], 0.7f + i * 0.35f, 10 + i * 4));
             yield return new WaitForSecondsRealtime(0.7f + 2 * 0.35f + 0.15f);
@@ -121,6 +131,7 @@ namespace Portfolio.Slot
                 bool fresh = !Energy.IsRevealed(sym.id);
                 Energy.Reveal(sym.id);
                 revealIcon.sprite = sym.icon;
+                Play(data.winSound);
                 revealTitle.text = fresh ? "THREE OF A KIND" : "AGAIN!";
                 revealBody.text = "";
                 reveal.gameObject.SetActive(true);
@@ -172,13 +183,18 @@ namespace Portfolio.Slot
                 c.rectTransform.anchoredPosition = new Vector2(0, i * Step); // strip moves down, cells stack up
             }
             float distance = (seq.Count - 1) * Step;
+            int lastTick = 0;
             for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
             {
                 float k = UIEase.OutBack(t / duration, 0.9f);
                 reel.strip.anchoredPosition = new Vector2(0, -distance * k);
+                // A ratchet click each time an icon passes the payline (quieter for the outer reels).
+                int tick = Mathf.FloorToInt(distance * k / Step);
+                if (tick != lastTick) { lastTick = tick; Play(data.tickSound, reel == reels[0] ? 0.55f : 0.3f, 0.95f + 0.1f * Random.value); }
                 yield return null;
             }
             reel.strip.anchoredPosition = new Vector2(0, -distance);
+            Play(data.stopSound, 0.9f, 0.9f + 0.1f * System.Array.IndexOf(reels, reel)); // clunk: each reel a touch higher
             // Settle: keep only the target, re-centred.
             reel.cells[0].sprite = data.symbols[target].icon;
             reel.cells[0].rectTransform.anchoredPosition = Vector2.zero;
@@ -204,8 +220,9 @@ namespace Portfolio.Slot
 
         IEnumerator Pop(Transform t)
         {
-            for (float k = 0; k < 1f; k += Time.unscaledDeltaTime / 0.3f) { t.localScale = Vector3.one * Mathf.Lerp(0.8f, 1f, UIEase.OutBack(k)); yield return null; }
-            t.localScale = Vector3.one;
+            var size = t == reveal ? Vector3.one * (Aspect.IsPortrait ? 1.4f : 1f) : Vector3.one; // keep the phone-size scale
+            for (float k = 0; k < 1f; k += Time.unscaledDeltaTime / 0.3f) { t.localScale = size * Mathf.Lerp(0.8f, 1f, UIEase.OutBack(k)); yield return null; }
+            t.localScale = size;
         }
 
         IEnumerator Shake(Transform t)
@@ -229,6 +246,7 @@ namespace Portfolio.Slot
         void OnGained(int value)
         {
             noteText.text = $"You caught Zion!  <b>+{value} energy</b>";
+            Play(data.catchSound);
             if (noteRoutine != null) StopCoroutine(noteRoutine);
             noteRoutine = StartCoroutine(Flash());
             if (open && !spinning) hintText.text = "Pull the lever.";
@@ -253,6 +271,8 @@ namespace Portfolio.Slot
             typeFont = skin && skin.typewriter ? skin.typewriter : TMP_Settings.defaultFontAsset;
             labelFont = skin && skin.label ? skin.label : typeFont;
             var root = (RectTransform)transform;
+            sfx = gameObject.AddComponent<AudioSource>();
+            sfx.playOnAwake = false; sfx.spatialBlend = 0f;
 
             BuildHud(root);
 
@@ -330,12 +350,17 @@ namespace Portfolio.Slot
             var rb = reveal.gameObject.AddComponent<Button>(); rb.transition = Selectable.Transition.None;
             rb.onClick.AddListener(() => { if (!spinning) reveal.gameObject.SetActive(false); });
 
-            // Leave.
-            var leave = UIObj("Leave", overlay);
-            leave.anchorMin = leave.anchorMax = new Vector2(1, 1); leave.pivot = new Vector2(1, 1); leave.sizeDelta = new Vector2(160, 60); leave.anchoredPosition = new Vector2(-30, -24);
-            var lt = Label("Text", leave, 24, FontStyles.Italic | FontStyles.Underline, paper, TextAlignmentOptions.Center, typeFont);
-            Stretch(lt.rectTransform); lt.text = "Leave"; lt.raycastTarget = true;
-            var leaveBtn = leave.gameObject.AddComponent<Button>(); leaveBtn.targetGraphic = lt; leaveBtn.onClick.AddListener(Hide);
+            // Exit: the PSD's X on a paper disc, with a finger-sized touch area.
+            var exit = UIObj("Exit", overlay);
+            exit.anchorMin = exit.anchorMax = exit.pivot = new Vector2(1, 1); exit.sizeDelta = new Vector2(84, 84); exit.anchoredPosition = new Vector2(-36, -36);
+            var disc = Img(exit, skin ? skin.Sliced("BG_Paper", 48) : null, skin ? Color.white : paper);
+            disc.type = Image.Type.Sliced;
+            var x = UIObj("X", exit); Stretch(x, 18, 18, 18, 18);
+            var xImg = Img(x, skin ? skin.Get("Btn_Close_Normal") : null, skin ? Color.white : ink); xImg.raycastTarget = false;
+            var exitBtn = exit.gameObject.AddComponent<Button>(); exitBtn.targetGraphic = disc; exitBtn.onClick.AddListener(Hide);
+            if (skin) SpriteStates.On(xImg, skin.Get("Btn_Close_Normal"), skin.Get("Btn_Close_Hover"));
+            exit.gameObject.AddComponent<Shadow>().effectColor = new Color(0, 0, 0, 0.35f);
+            HitArea.Grow(exitBtn, 150f);
 
             Energy.Changed += RefreshAll;
             Energy.Gained += OnGained;
@@ -346,10 +371,12 @@ namespace Portfolio.Slot
         void Layout()
         {
             bool portrait = Aspect.IsPortrait;
-            machine.anchorMin = machine.anchorMax = new Vector2(portrait ? 0.46f : 0.38f, portrait ? 0.6f : 0.52f);
+            // Phones: the machine fills the width (lever included) and sits high; secrets go underneath.
+            machine.anchorMin = machine.anchorMax = new Vector2(portrait ? 0.44f : 0.38f, portrait ? 0.63f : 0.52f);
             machine.anchoredPosition = Vector2.zero;
-            machine.localScale = Vector3.one * (portrait ? 1.15f : 1.05f);
-            if (portrait) { factsCard.anchorMin = new Vector2(0.06f, 0.02f); factsCard.anchorMax = new Vector2(0.94f, 0.22f); }
+            machine.localScale = Vector3.one * (portrait ? 1.5f : 1.05f);
+            reveal.localScale = Vector3.one * (portrait ? 1.4f : 1f);
+            if (portrait) { factsCard.anchorMin = new Vector2(0.05f, 0.025f); factsCard.anchorMax = new Vector2(0.95f, 0.235f); }
             else { factsCard.anchorMin = new Vector2(0.62f, 0.26f); factsCard.anchorMax = new Vector2(0.93f, 0.78f); }
             factsCard.offsetMin = factsCard.offsetMax = Vector2.zero;
         }

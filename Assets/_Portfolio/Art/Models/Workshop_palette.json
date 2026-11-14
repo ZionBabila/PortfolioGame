@@ -1,5 +1,5 @@
 {
- "exported": "2026-11-14T08:24:14",
+ "exported": "2026-11-14T09:44:12",
  "materials": {
   "Cork": {
    "hex": "FFFFFF",
@@ -65,6 +65,10 @@
   },
   "M_Leather": {
    "hex": "8A5A3C",
+   "textured": false
+  },
+  "M_MachineSteel": {
+   "hex": "4A4542",
    "textured": false
   },
   "M_PCB": {

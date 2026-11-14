@@ -99,6 +99,7 @@ namespace Portfolio
                 SpriteStates.On(closeImg, skin.Get("Btn_Close_Normal"), skin.Get("Btn_Close_Hover"));
                 var cr = (RectTransform)closeButton.transform;
                 cr.sizeDelta = new Vector2(44, 44);
+                HitArea.Grow(closeButton, 140f); // a finger-sized target around the small X
                 cr.anchoredPosition = new Vector2(-26, -30);
             }
 
