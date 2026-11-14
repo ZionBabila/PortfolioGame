@@ -1,0 +1,95 @@
+<!doctype html><meta charset="utf-8"><body><pre id="out"></pre><script>
+// Slot machine art (2x of UI size). Render: headless Edge --dump-dom, then python -I decode_slot.py <dom> <outdir>.
+const C={paper:'#EFE9DC',edge:'#D9D0BD',card:'#F8F4EA',ink:'#2B2622',soft:'#6D645A',accent:'#E2611F',
+  steel:'#4A4542',steelHi:'#6E6863',steelLo:'#2F2B29',brass:'#B8924A',reel:'#F4EEE2'};
+const L=[];
+function sprite(name,w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.lineCap='round';x.lineJoin='round';draw(x,w,h);L.push({name,png:c.toDataURL('image/png')});}
+function rr(x,X,Y,w,h,r){x.beginPath();x.roundRect(X,Y,w,h,r);}
+function grain(x,w,h,a){const img=x.getImageData(0,0,w,h),d=img.data;let s=99991;for(let i=0;i<d.length;i+=4){if(!d[i+3])continue;s=(s*16807)%2147483647;const n=(s/2147483647-.5)*a;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}x.putImageData(img,0,0);}
+function rivet(x,X,Y,r){x.fillStyle=C.steelLo;x.beginPath();x.arc(X+2,Y+3,r,0,7);x.fill();x.fillStyle=C.steelHi;x.beginPath();x.arc(X,Y,r,0,7);x.fill();x.fillStyle='rgba(255,255,255,.35)';x.beginPath();x.arc(X-r*.35,Y-r*.35,r*.35,0,7);x.fill();}
+function hazard(x,X,Y,w,h){x.save();rr(x,X,Y,w,h,8);x.clip();x.fillStyle=C.ink;x.fillRect(X,Y,w,h);x.fillStyle=C.accent;for(let i=-h;i<w+h;i+=56){x.beginPath();x.moveTo(X+i,Y+h);x.lineTo(X+i+28,Y+h);x.lineTo(X+i+28+h,Y);x.lineTo(X+i+h,Y);x.closePath();x.fill();}x.restore();}
+
+// ---------- Cabinet: 1000x1400 (UI 500x700) ----------
+sprite('Slot_Body',1000,1400,(x,w,h)=>{
+  // shadow + body plate
+  x.fillStyle='rgba(43,38,34,.35)';rr(x,26,40,w-40,h-50,36);x.fill();
+  x.fillStyle=C.steel;rr(x,14,14,w-40,h-50,36);x.fill();
+  x.lineWidth=10;x.strokeStyle=C.steelLo;rr(x,14,14,w-40,h-50,36);x.stroke();
+  // bevel highlight
+  x.lineWidth=4;x.strokeStyle=C.steelHi;rr(x,30,30,w-72,h-82,28);x.stroke();
+  // marquee plate
+  x.fillStyle=C.paper;rr(x,90,70,w-220,190,18);x.fill();x.lineWidth=8;x.strokeStyle=C.ink;rr(x,90,70,w-220,190,18);x.stroke();
+  x.fillStyle=C.ink;x.font='bold 74px "Courier Prime", "Courier New", monospace';x.textAlign='center';x.fillText('ZION · BABILA',(w-40)/2,165);
+  x.fillStyle=C.accent;x.font='500 30px "Work Sans", Arial';x.fillText('INDUSTRIAL  FORTUNE  MACHINE',(w-40)/2,222);
+  // reel bay recess (UI puts reels on top)
+  x.fillStyle=C.steelLo;rr(x,80,320,w-200,420,22);x.fill();
+  x.lineWidth=6;x.strokeStyle='#1E1B1A';rr(x,80,320,w-200,420,22);x.stroke();
+  // nameplate + vents
+  x.fillStyle=C.brass;rr(x,330,800,320,74,10);x.fill();x.lineWidth=4;x.strokeStyle='#7E6330';rr(x,330,800,320,74,10);x.stroke();
+  x.fillStyle=C.ink;x.font='bold 30px "Courier Prime", monospace';x.fillText('MODEL ZB-26',490,848);
+  for(let i=0;i<6;i++){x.fillStyle=C.steelLo;rr(x,120,930+i*44,300,18,9);x.fill();x.fillStyle=C.steelLo;rr(x,560,930+i*44,300,18,9);x.fill();}
+  // hazard band + coin tray
+  hazard(x,70,1210,w-180,56);
+  x.fillStyle=C.steelLo;rr(x,300,1150,380,40,12);x.fill();
+  // rivets
+  [[60,60],[w-90,60],[60,h-110],[w-90,h-110],[60,h/2-40],[w-90,h/2-40]].forEach(([a,b])=>rivet(x,a,b,15));
+  grain(x,w,h,16);
+});
+
+// ---------- Reel window frame: 300x420, transparent middle ----------
+sprite('Slot_Window',300,420,(x,w,h)=>{
+  x.lineWidth=22;x.strokeStyle=C.brass;rr(x,14,14,w-28,h-28,22);x.stroke();
+  x.lineWidth=5;x.strokeStyle='#7E6330';rr(x,4,4,w-8,h-8,28);x.stroke();rr(x,26,26,w-52,h-52,14);x.stroke();
+  // payline notches
+  x.fillStyle=C.accent;x.beginPath();x.moveTo(0,h/2-16);x.lineTo(24,h/2);x.lineTo(0,h/2+16);x.fill();
+  x.beginPath();x.moveTo(w,h/2-16);x.lineTo(w-24,h/2);x.lineTo(w,h/2+16);x.fill();
+  [[18,18],[w-18,18],[18,h-18],[w-18,h-18]].forEach(([a,b])=>{x.fillStyle='#7E6330';x.beginPath();x.arc(a,b,7,0,7);x.fill();});
+});
+
+// ---------- Lever: 160x620, pivot at bottom centre ----------
+sprite('Slot_Lever',160,620,(x,w,h)=>{
+  x.fillStyle=C.steelLo;rr(x,w/2-16,110,32,h-170,14);x.fill();
+  x.fillStyle=C.steelHi;rr(x,w/2-10,116,10,h-182,6);x.fill();
+  x.fillStyle=C.steel;rr(x,w/2-48,h-90,96,80,18);x.fill();x.lineWidth=6;x.strokeStyle=C.steelLo;rr(x,w/2-48,h-90,96,80,18);x.stroke();
+  rivet(x,w/2,h-50,10);
+  const g=x.createRadialGradient(w/2-22,62,8,w/2,80,70);g.addColorStop(0,'#F59A62');g.addColorStop(1,C.accent);
+  x.fillStyle=g;x.beginPath();x.arc(w/2,80,66,0,7);x.fill();x.lineWidth=6;x.strokeStyle='#A8430F';x.stroke();
+});
+
+// ---------- Energy bolt: 160x160 ----------
+sprite('Slot_Energy',160,160,(x,w,h)=>{
+  x.fillStyle=C.accent;x.strokeStyle=C.ink;x.lineWidth=8;
+  x.beginPath();x.moveTo(92,10);x.lineTo(34,92);x.lineTo(76,92);x.lineTo(62,150);x.lineTo(128,62);x.lineTo(84,62);x.closePath();x.fill();x.stroke();
+});
+
+// ---------- Icons: 256x256, ink line art with one accent detail ----------
+function icon(name,draw){sprite('Icon_'+name,256,256,(x)=>{x.lineWidth=11;x.strokeStyle=C.ink;x.fillStyle=C.accent;draw(x);});}
+icon('Lamp',x=>{ // Babilanur: glass bulb on a brass stem, wooden base
+  x.beginPath();x.arc(128,82,52,0,7);x.stroke();
+  x.beginPath();x.moveTo(128,70);x.lineTo(118,96);x.lineTo(138,96);x.lineTo(128,70);x.fill();
+  x.beginPath();x.moveTo(128,134);x.bezierCurveTo(120,170,146,180,128,210);x.stroke();
+  x.beginPath();x.roundRect(70,206,116,30,6);x.stroke();});
+icon('Controller',x=>{ // games
+  x.beginPath();x.moveTo(60,110);x.bezierCurveTo(40,110,24,190,52,196);x.bezierCurveTo(72,200,84,170,100,166);x.lineTo(156,166);x.bezierCurveTo(172,170,184,200,204,196);x.bezierCurveTo(232,190,216,110,196,110);x.closePath();x.stroke();
+  x.beginPath();x.moveTo(78,138);x.lineTo(104,138);x.moveTo(91,125);x.lineTo(91,151);x.stroke();
+  x.beginPath();x.arc(170,132,9,0,7);x.fill();x.beginPath();x.arc(188,150,9,0,7);x.fill();});
+icon('Chip',x=>{ // PCB / electronics
+  x.beginPath();x.roundRect(72,72,112,112,12);x.stroke();
+  for(let i=0;i<4;i++){const p=88+i*26;x.beginPath();x.moveTo(p,72);x.lineTo(p,44);x.moveTo(p,184);x.lineTo(p,212);x.moveTo(72,p);x.lineTo(44,p);x.moveTo(184,p);x.lineTo(212,p);x.stroke();}
+  x.beginPath();x.arc(128,128,18,0,7);x.fill();});
+icon('Camera',x=>{ // cinema camera
+  x.beginPath();x.roundRect(48,108,118,84,10);x.stroke();
+  x.beginPath();x.moveTo(166,128);x.lineTo(214,108);x.lineTo(214,192);x.lineTo(166,172);x.stroke();
+  x.beginPath();x.arc(80,76,30,0,7);x.stroke();x.beginPath();x.arc(140,76,30,0,7);x.stroke();
+  x.beginPath();x.arc(140,76,9,0,7);x.fill();});
+icon('Frame',x=>{ // museum miniature room
+  x.beginPath();x.rect(52,52,152,152);x.stroke();x.lineWidth=6;x.beginPath();x.rect(72,72,112,112);x.stroke();x.lineWidth=11;
+  x.beginPath();x.moveTo(92,164);x.lineTo(92,124);x.lineTo(128,98);x.lineTo(164,124);x.lineTo(164,164);x.stroke();
+  x.beginPath();x.rect(118,136,20,28);x.fill();});
+icon('Wrench',x=>{ // maker / fabrication
+  x.beginPath();x.moveTo(78,196);x.lineTo(158,116);x.stroke();
+  x.beginPath();x.arc(176,96,40,Math.PI*0.95,Math.PI*2.55);x.stroke();
+  x.beginPath();x.arc(66,208,16,0,7);x.fill();});
+
+document.getElementById('out').textContent=JSON.stringify(L);
+</script></body>

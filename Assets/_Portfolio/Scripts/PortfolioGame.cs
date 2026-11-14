@@ -19,6 +19,20 @@ namespace Portfolio
             player.StartedMoving += panel.Hide;
             if (quickNav) quickNav.Build(stations, player);
             if (panel) HudSkin.Apply(panel.GetComponentInParent<Canvas>().rootCanvas.transform, UISkin.Default);
+
+            // The fortune machine (HUD stamp + overlay) and the Zion you catch for its energy.
+            if (panel && Slot.SlotMachineData.Default)
+            {
+                Slot.SlotMachineUI.Install(panel.GetComponentInParent<Canvas>().rootCanvas.transform);
+                Slot.ZionRunner.Spawn(player);
+                // Who's visiting: HR, Team Lead, Head of Department or just visiting (asked on the first visit).
+                Slot.VisitorSelect.Install(panel.GetComponentInParent<Canvas>().rootCanvas.transform, player);
+            }
+
+            // Dana, the old HR recruiter NPC, is retired: the visitor can now *be* HR. Switched off here rather than
+            // deleted from Workshop.unity, so the scene file stays untouched.
+            foreach (var hr in FindObjectsByType<HRRecruiter>(FindObjectsInactive.Include)) hr.gameObject.SetActive(false);
+            foreach (var dialog in FindObjectsByType<HRDialog>(FindObjectsInactive.Include)) dialog.gameObject.SetActive(false);
         }
 
         void Update()

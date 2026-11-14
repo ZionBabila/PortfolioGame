@@ -42,6 +42,8 @@ namespace Portfolio.EditorTools
         public static bool Build()
         {
             if (EditorBuildSettings.scenes.Length == 0) PortfolioSceneBuilder.BuildWorkshop(confirm: false);
+            // Generated content first: a command-line build never gives the editor's on-load builders a chance to run.
+            SlotContentBuilder.Build();
 
             PlayerSettings.productName = "Portfolio";
             PlayerSettings.WebGL.template = "PROJECT:Responsive";

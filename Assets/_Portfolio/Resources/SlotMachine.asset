@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9df08e1a7b19b1b4e892a11400feb691, type: 3}
+  m_Name: SlotMachine
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.Slot.SlotMachineData
+  symbols:
+  - id: Lamp
+    icon: {fileID: 21300000, guid: 2ddf03afa26ab314c9a0c9869cee4be4, type: 3}
+    fact: 'Since 2017 I''ve run my own lighting brand, Babilanur: lamps you control by touch.'
+    factHR: Running my own brand for seven years taught me to own a project end to end.
+    factTeamLead: Babilanur lamps combine handcrafted wood and metal, 3D printing and microcontrollers.
+    factHead: Babilanur has been my own product brand since 2017, from concept to fabrication.
+  - id: Controller
+    icon: {fileID: 21300000, guid: 2f200b569080cb94790e0c421dff2f22, type: 3}
+    fact: I built five games at Shenkar, one of them in 48 hours at Global Game Jam.
+    factHR: At Global Game Jam I shipped a full game in 48 hours with a team.
+    factTeamLead: In Unity I script player controllers, enemy behavior and animation state machines.
+    factHead: Five games in one program, finished with highest honors.
+  - id: Chip
+    icon: {fileID: 21300000, guid: d990ad4d7fe8c724cb4b18d81eb65777, type: 3}
+    fact: I design my own PCBs, and took a product through FCC and CE certification.
+    factHR: I work directly with engineers and manufacturers, all the way to production.
+    factTeamLead: I design PCBs and custom electronics around sensors and microcontrollers.
+    factHead: I took a product through FCC and CE certification and into production.
+  - id: Camera
+    icon: {fileID: 21300000, guid: 80ffa6fec3064fb41bfccb4834dfcda0, type: 3}
+    fact: Before design, I was a cinema camera technician on film sets.
+    factHR: Years on film sets taught me to keep calm and work well in a big crew.
+    factTeamLead: As a camera technician I learned to troubleshoot complex rigs under pressure.
+    factHead: I built and priced equipment packages for film productions and led the warehouse team.
+  - id: Frame
+    icon: {fileID: 21300000, guid: f8f58ed3e7ae41442b9a0312ef166fe8, type: 3}
+    fact: I lit 17 century-old miniature rooms for the Tel Aviv Museum of Art.
+    factHR: 'A museum trusted me with 100-year-old miniatures: careful, patient work.'
+    factTeamLead: Custom LED circuits for each of 17 rooms, installed without drilling a single hole.
+    factHead: My lighting is part of a permanent 20-year exhibit at the Tel Aviv Museum of Art.
+  - id: Wrench
+    icon: {fileID: 21300000, guid: 905b39a7149822149b6687b4b83e8f98, type: 3}
+    fact: I finished Game Development at Shenkar with highest honors, and I still build everything by hand.
+    factHR: 'I''m a maker: I learn by building things with my own hands.'
+    factTeamLead: 'SolidWorks, Blender, Unity and Arduino: I go from CAD to code.'
+    factHead: 'Industrial designer and game developer in one: I design it, build it and ship it.'
+  body: {fileID: 21300000, guid: dff9bbda91903904182540b690445b8c, type: 3}
+  window: {fileID: 21300000, guid: 751a88196f2f8394884f8cc987ee6dc9, type: 3}
+  lever: {fileID: 21300000, guid: 3fc08e6198c449b4cba1e16fc2581fc3, type: 3}
+  energyIcon: {fileID: 21300000, guid: bf4c581aba4f58e46aaf8d767111eb9a, type: 3}
+  startEnergy: 3
+  spinCost: 1
+  energyPerCatch: 2
+  tripleChance: 0.22
+  pityPerMiss: 0.12
+  preferNew: 0.85
+  allRevealed: That's all six. Now you know me. Let's talk.
+  allRevealedHR: That's all six. Shall we schedule the interview?
+  allRevealedTeamLead: That's all six. Want to see the code?
+  allRevealedHead: That's all six. Let's talk about what I can build for you.
