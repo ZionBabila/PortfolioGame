@@ -24,11 +24,11 @@ namespace Portfolio
             if (hint && hint.TryGetComponent<TMP_Text>(out var text))
             {
                 skin.Type(text, FontStyles.Italic);
-                text.color = skin.ink;
+                // Paper-colored type with an ink edge: the studio floor is dark concrete.
+                text.color = skin.paper;
                 text.characterSpacing = 2f;
-                // A thin outline keeps the ink readable over both the light floor and the dark machines.
-                text.outlineWidth = 0.18f;
-                text.outlineColor = (Color32)skin.paper;
+                text.outlineWidth = 0.2f;
+                text.outlineColor = (Color32)skin.ink;
             }
         }
     }

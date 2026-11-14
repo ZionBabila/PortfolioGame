@@ -57,32 +57,82 @@ namespace Portfolio.EditorTools
         /// { "materials": { "M_Steel": { "hex": "2B2622", "textured": false }, ... } }.
         /// The model's extracted materials don't follow Blender after the first import, so this file is the link.
         /// </summary>
-        static Dictionary<string, Color> ReadPalette()
+        static Dictionary<string, Color> ReadPalette() => ReadPalette(out _);
+
+        /// <summary>
+        /// Flat colors by material name, plus textured entries: { "texture": "silver_oak_veneer_02_diff_2k",
+        /// "tint": "C8A57C" } — Blender stores the tint (multiplier that lands the texture on its palette color)
+        /// as the material's "unity_tint" property.
+        /// </summary>
+        static Dictionary<string, Color> ReadPalette(out Dictionary<string, (string texture, Color tint)> textured)
         {
             var result = new Dictionary<string, Color>();
+            textured = new Dictionary<string, (string, Color)>();
             var file = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), PalettePath);
             if (!System.IO.File.Exists(file)) return result;
             var json = System.IO.File.ReadAllText(file);
-            var rx = new System.Text.RegularExpressions.Regex(
-                "\"([^\"]+)\"\\s*:\\s*\\{\\s*\"hex\"\\s*:\\s*\"([0-9A-Fa-f]{6})\"\\s*,\\s*\"textured\"\\s*:\\s*(true|false)");
-            foreach (System.Text.RegularExpressions.Match m in rx.Matches(json))
-                if (m.Groups[3].Value == "false" && ColorUtility.TryParseHtmlString("#" + m.Groups[2].Value, out var c))
-                    result[m.Groups[1].Value] = c;
+            string Field(string body, string key)
+            {
+                var f = System.Text.RegularExpressions.Regex.Match(body, "\"" + key + "\"\\s*:\\s*(\"([^\"]*)\"|true|false)");
+                return !f.Success ? null : f.Groups[2].Success && f.Groups[1].Value.StartsWith("\"") ? f.Groups[2].Value : f.Groups[1].Value;
+            }
+            foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(json, "\"([^\"]+)\"\\s*:\\s*\\{([^{}]*)\\}"))
+            {
+                var name = m.Groups[1].Value; var body = m.Groups[2].Value;
+                if (Field(body, "textured") == "true")
+                {
+                    var tex = Field(body, "texture");
+                    var tint = Color.white;
+                    var tintHex = Field(body, "tint");
+                    if (!string.IsNullOrEmpty(tintHex)) ColorUtility.TryParseHtmlString("#" + tintHex, out tint);
+                    if (!string.IsNullOrEmpty(tex)) textured[name] = (tex, tint);
+                }
+                else if (ColorUtility.TryParseHtmlString("#" + Field(body, "hex"), out var c))
+                    result[name] = c;
+            }
             return result;
+        }
+
+        static Texture2D FindTexture(string fileName)
+        {
+            var guid = AssetDatabase.FindAssets(fileName + " t:Texture2D", new[] { "Assets/_Portfolio/Art/Textures" })
+                .FirstOrDefault(g => System.IO.Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(g)) == fileName);
+            return guid == null ? null : AssetDatabase.LoadAssetAtPath<Texture2D>(AssetDatabase.GUIDToAssetPath(guid));
+        }
+
+        static void ApplyTexture(Material m, Texture2D tex, Color tint)
+        {
+            if (m.HasProperty("_BaseMap")) m.SetTexture("_BaseMap", tex);
+            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", tint);
         }
 
         [MenuItem("Portfolio/Art/Sync Toon Colors From Blender")]
         public static void Sync()
         {
-            var sources = ReadPalette();
+            var sources = ReadPalette(out var texturedSources);
             if (sources.Count == 0) { Debug.LogError($"[Portfolio] No colors in {PalettePath}. Export it from Blender first."); return; }
+            var textures = new Dictionary<string, Texture2D>();
+            foreach (var kv in texturedSources)
+            {
+                var t = FindTexture(kv.Value.texture);
+                if (t) textures[kv.Key] = t;
+                else Debug.LogWarning($"[Portfolio] Texture '{kv.Value.texture}' for {kv.Key} isn't under Art/Textures.");
+            }
 
             // Keep the model's own (extracted) materials in step too, so the imported model matches in the Inspector.
             foreach (var path in AssetDatabase.FindAssets("t:Material", new[] { ExtractedDir }).Select(AssetDatabase.GUIDToAssetPath))
             {
                 var m = AssetDatabase.LoadAssetAtPath<Material>(path);
-                if (m && sources.TryGetValue(m.name, out var c) && m.HasProperty("_BaseColor") && !(m.HasProperty("_BaseMap") && m.GetTexture("_BaseMap")))
+                if (m && textures.TryGetValue(m.name, out var tx))
                 {
+                    ApplyTexture(m, tx, texturedSources[m.name].tint);
+                    EditorUtility.SetDirty(m);
+                }
+                else if (m && sources.TryGetValue(m.name, out var c) && m.HasProperty("_BaseColor"))
+                {
+                    // Flat in Blender = flat here too. Leaving the texture on the source would let the Workshop
+                    // sync (PortfolioArtTools.ToonFor) copy it back onto the toon material.
+                    if (m.HasProperty("_BaseMap") && m.GetTexture("_BaseMap")) m.SetTexture("_BaseMap", null);
                     m.SetColor("_BaseColor", c);
                     EditorUtility.SetDirty(m);
                 }
@@ -99,7 +149,14 @@ namespace Portfolio.EditorTools
                 if (toon.HasProperty("_ShadeColor")) toon.SetColor("_ShadeColor", Shade);
 
                 bool textured = toon.HasProperty("_BaseMap") && toon.GetTexture("_BaseMap");
-                if (sources.TryGetValue(key, out var flat))
+                if (textures.TryGetValue(key, out var tx))
+                {
+                    // Textured in Blender: the texture gives the grain, the tint keeps it on its palette color.
+                    var tint = texturedSources[key].tint;
+                    ApplyTexture(toon, tx, tint);
+                    log.Add($"{key}: {tx.name} x #{ColorUtility.ToHtmlStringRGB(tint)}");
+                }
+                else if (sources.TryGetValue(key, out var flat))
                 {
                     // Flat in Blender (e.g. the floor, switched from a photo texture to a palette color): drop the texture.
                     if (textured) toon.SetTexture("_BaseMap", null);

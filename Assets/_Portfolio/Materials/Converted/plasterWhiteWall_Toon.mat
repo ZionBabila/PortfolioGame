@@ -33,7 +33,7 @@ Material:
     - _OutlineSource: 2
     - _OutlineWidth: 0.025
     m_Colors:
-    - _BaseColor: {r: 1, g: 0.9647059, b: 0.9098039, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0.16862746, g: 0.14901961, b: 0.13333334, a: 1}
     - _ShadeColor: {r: 0.78039217, g: 0.7294118, b: 0.74509805, a: 1}
   m_BuildTextureStacks: []

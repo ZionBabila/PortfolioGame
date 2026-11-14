@@ -1,12 +1,14 @@
 {
- "exported": "2026-11-13T22:13:17",
+ "exported": "2026-11-14T08:24:14",
  "materials": {
   "Cork": {
-   "hex": "E7E7E7",
+   "hex": "FFFFFF",
+   "texture": "corkboard3b-albedo",
    "textured": true
   },
   "GalleryWood": {
-   "hex": "E7E7E7",
+   "hex": "FFFFFF",
+   "texture": "wooden_planks_diff_2k",
    "textured": true
   },
   "M_Accent": {
@@ -78,8 +80,10 @@
    "textured": false
   },
   "M_Plywood": {
-   "hex": "D9B98C",
-   "textured": false
+   "hex": "FFFFFF",
+   "texture": "silver_oak_veneer_02_diff_2k",
+   "textured": true,
+   "tint": "F0D79A"
   },
   "M_PrinterBody": {
    "hex": "3A3533",
@@ -126,35 +130,43 @@
    "textured": false
   },
   "M_Wood": {
-   "hex": "B98A5E",
-   "textured": false
+   "hex": "FFFFFF",
+   "texture": "silver_oak_veneer_02_diff_2k",
+   "textured": true,
+   "tint": "D2A56E"
   },
   "M_WoodDark": {
-   "hex": "6B4A36",
-   "textured": false
+   "hex": "FFFFFF",
+   "texture": "silver_oak_veneer_02_diff_2k",
+   "textured": true,
+   "tint": "745949"
   },
   "M_Yellow": {
    "hex": "D9A441",
    "textured": false
   },
   "Material": {
-   "hex": "A09D97",
-   "textured": false
+   "hex": "FFFFFF",
+   "texture": "smooth_concrete_floor_diff_2k",
+   "textured": true,
+   "tint": "8FA1B8"
   },
   "Poliigon_ConcreteFloorPoured_7656_2K": {
-   "hex": "A09D97",
+   "hex": "55524E",
    "textured": false
   },
   "Poliigon_PlasterPainted_7664_1K": {
-   "hex": "E7E7E7",
+   "hex": "FFFFFF",
    "textured": true
   },
   "plasterWhiteWall": {
-   "hex": "E7E7E7",
+   "hex": "FFFFFF",
+   "texture": "painted_plaster_wall_diff_2k",
    "textured": true
   },
   "polyWood": {
-   "hex": "DBE7D2",
+   "hex": "FFFFFF",
+   "texture": "silver_oak_veneer_02_diff_2k",
    "textured": true
   }
  },
