@@ -30,9 +30,9 @@ namespace Portfolio.Slot
         int misses;
         AudioSource sfx;
         CanvasGroup group;
-        RectTransform machine, lever, reveal, factsCard;
+        RectTransform machine, lever, reveal, factsCard, sheet;
         readonly Reel[] reels = new Reel[3];
-        TMP_Text energyText, hintText, revealTitle, revealBody, factsText;
+        TMP_Text energyText, hintText, revealTitle, revealBody, factsText, headTitle, headSub;
         Image revealIcon;
 
         // HUD
@@ -238,6 +238,10 @@ namespace Portfolio.Slot
         {
             if (!energyText) return;
             energyText.text = $"ENERGY  <size=150%>{Energy.Amount}</size>";
+            var role = Visitor.Current;
+            headSub.text = role == VisitorRole.Neutral || !Visitor.Chosen
+                ? "Line up three of a kind and I'll tell you something about me."
+                : $"Line up three of a kind. Every secret is picked for you, the {Visitor.Title(role)}.";
             hudText.text = $"<size=125%>{Energy.Amount}</size>   Fortune machine";
             factsText.text = $"<b>SECRETS  {Energy.RevealedCount}/{data.symbols.Count}</b>\n\n" + string.Join("\n\n",
                 data.symbols.Select(s => Energy.IsRevealed(s.id) ? s.FactFor(Visitor.Current) : "· · ·"));
@@ -281,7 +285,29 @@ namespace Portfolio.Slot
             var layer = overlay.gameObject.AddComponent<Canvas>(); layer.overrideSorting = true; layer.sortingOrder = 100;
             overlay.gameObject.AddComponent<GraphicRaycaster>();
             group = overlay.gameObject.AddComponent<CanvasGroup>(); group.alpha = 0; group.blocksRaycasts = false;
-            var dim = overlay.gameObject.AddComponent<Image>(); dim.color = new Color(ink.r, ink.g, ink.b, 0.88f);
+            var dim = overlay.gameObject.AddComponent<Image>(); dim.color = new Color(ink.r, ink.g, ink.b, 0.8f);
+
+            // The same letter as the station panels and the welcome screen: paper sheet, letterhead, typed title.
+            sheet = UIObj("Letter", overlay);
+            Img(sheet, skin ? skin.Sliced("BG_Paper", 48) : null, skin ? Color.white : paper).type = Image.Type.Sliced;
+            var shadow = sheet.gameObject.AddComponent<Shadow>(); shadow.effectColor = new Color(0, 0, 0, 0.35f); shadow.effectDistance = new Vector2(8, -12);
+            var head = UIObj("Header", sheet);
+            head.anchorMin = new Vector2(0, 1); head.anchorMax = new Vector2(1, 1); head.pivot = new Vector2(0.5f, 1);
+            head.offsetMin = new Vector2(70, -260); head.offsetMax = new Vector2(-150, -50);
+            var hv = head.gameObject.AddComponent<VerticalLayoutGroup>();
+            hv.spacing = 12; hv.childControlWidth = hv.childControlHeight = true; hv.childForceExpandHeight = false;
+            var kicker = Label("Kicker", head, 20, FontStyles.Normal, accent, TextAlignmentOptions.Left, labelFont);
+            kicker.text = "ZION BABILA  ·  FORTUNE MACHINE"; kicker.characterSpacing = 12;
+            headTitle = Label("Title", head, 54, FontStyles.Bold, ink, TextAlignmentOptions.Left, typeFont);
+            headTitle.text = "Pull for a secret.";
+            headSub = Label("Sub", head, 28, FontStyles.Italic, soft, TextAlignmentOptions.Left, typeFont);
+            if (skin && skin.Get("Logo_Stroke"))
+            {
+                var logo = UIObj("Logo_Stroke", sheet);
+                logo.anchorMin = logo.anchorMax = logo.pivot = new Vector2(1, 1); logo.anchoredPosition = new Vector2(-100, -30);
+                var li = Img(logo, skin.Get("Logo_Stroke"), Color.white); li.raycastTarget = false; li.SetNativeSize();
+                logo.sizeDelta *= 1.6f;
+            }
 
             // The cabinet (500x700) with three reel windows, energy counter and lever.
             machine = UIObj("Machine", overlay);
@@ -310,7 +336,7 @@ namespace Portfolio.Slot
             var bolt = UIObj("Bolt", machine); bolt.anchorMin = bolt.anchorMax = new Vector2(0.5f, 1); bolt.sizeDelta = new Vector2(48, 48); bolt.anchoredPosition = new Vector2(-150, -470);
             Img(bolt, data.energyIcon, Color.white);
 
-            hintText = Label("Hint", machine, 24, FontStyles.Italic, paper, TextAlignmentOptions.Center, typeFont);
+            hintText = Label("Hint", machine, 24, FontStyles.Italic, soft, TextAlignmentOptions.Center, typeFont);
             var ht = hintText.rectTransform; ht.anchorMin = new Vector2(0, 0); ht.anchorMax = new Vector2(1, 0); ht.sizeDelta = new Vector2(0, 60); ht.anchoredPosition = new Vector2(0, -50);
 
             // Lever: tap (or click) to pull.
@@ -331,6 +357,8 @@ namespace Portfolio.Slot
             // Secrets so far.
             factsCard = UIObj("Secrets", overlay);
             Img(factsCard, skin ? skin.Sliced("BG_Paper", 48) : null, skin ? Color.white : paper).type = Image.Type.Sliced;
+            var fs = factsCard.gameObject.AddComponent<Shadow>(); fs.effectColor = new Color(ink.r, ink.g, ink.b, 0.25f); fs.effectDistance = new Vector2(4, -6);
+            factsCard.GetComponent<Image>().color = skin ? skin.card : paper;
             factsText = Label("Text", factsCard, 21, FontStyles.Normal, ink, TextAlignmentOptions.TopLeft, typeFont);
             Stretch(factsText.rectTransform, 30, 30, 26, 26);
             factsText.enableAutoSizing = true; factsText.fontSizeMin = 14; factsText.fontSizeMax = 21;
@@ -351,15 +379,15 @@ namespace Portfolio.Slot
             rb.onClick.AddListener(() => { if (!spinning) reveal.gameObject.SetActive(false); });
 
             // Exit: the PSD's X on a paper disc, with a finger-sized touch area.
-            var exit = UIObj("Exit", overlay);
-            exit.anchorMin = exit.anchorMax = exit.pivot = new Vector2(1, 1); exit.sizeDelta = new Vector2(84, 84); exit.anchoredPosition = new Vector2(-36, -36);
-            var disc = Img(exit, skin ? skin.Sliced("BG_Paper", 48) : null, skin ? Color.white : paper);
-            disc.type = Image.Type.Sliced;
-            var x = UIObj("X", exit); Stretch(x, 18, 18, 18, 18);
+            // Exit: the same X, in the same corner, as on the station letters.
+            var exit = UIObj("Exit", sheet);
+            exit.anchorMin = exit.anchorMax = exit.pivot = new Vector2(1, 1); exit.sizeDelta = new Vector2(52, 52); exit.anchoredPosition = new Vector2(-26, -30);
+            var disc = Img(exit, null, new Color(0, 0, 0, 0));
+            var x = UIObj("X", exit); Stretch(x);
             var xImg = Img(x, skin ? skin.Get("Btn_Close_Normal") : null, skin ? Color.white : ink); xImg.raycastTarget = false;
             var exitBtn = exit.gameObject.AddComponent<Button>(); exitBtn.targetGraphic = disc; exitBtn.onClick.AddListener(Hide);
             if (skin) SpriteStates.On(xImg, skin.Get("Btn_Close_Normal"), skin.Get("Btn_Close_Hover"));
-            exit.gameObject.AddComponent<Shadow>().effectColor = new Color(0, 0, 0, 0.35f);
+            xImg.preserveAspect = true;
             HitArea.Grow(exitBtn, 150f);
 
             Energy.Changed += RefreshAll;
@@ -371,13 +399,19 @@ namespace Portfolio.Slot
         void Layout()
         {
             bool portrait = Aspect.IsPortrait;
-            // Phones: the machine fills the width (lever included) and sits high; secrets go underneath.
-            machine.anchorMin = machine.anchorMax = new Vector2(portrait ? 0.44f : 0.38f, portrait ? 0.63f : 0.52f);
+            // The letter fills the screen with a margin; the letterhead sits on top, the machine under it.
+            sheet.anchorMin = portrait ? new Vector2(0.03f, 0.015f) : new Vector2(0.05f, 0.04f);
+            sheet.anchorMax = portrait ? new Vector2(0.97f, 0.985f) : new Vector2(0.95f, 0.96f);
+            sheet.offsetMin = sheet.offsetMax = Vector2.zero;
+            headTitle.fontSize = portrait ? 62 : 54;
+            headSub.fontSize = portrait ? 32 : 28;
+            // Phones: the machine fills the width (lever included); secrets go underneath.
+            machine.anchorMin = machine.anchorMax = new Vector2(portrait ? 0.44f : 0.34f, portrait ? 0.565f : 0.44f);
             machine.anchoredPosition = Vector2.zero;
-            machine.localScale = Vector3.one * (portrait ? 1.5f : 1.05f);
+            machine.localScale = Vector3.one * (portrait ? 1.35f : 0.95f);
             reveal.localScale = Vector3.one * (portrait ? 1.4f : 1f);
-            if (portrait) { factsCard.anchorMin = new Vector2(0.05f, 0.025f); factsCard.anchorMax = new Vector2(0.95f, 0.235f); }
-            else { factsCard.anchorMin = new Vector2(0.62f, 0.26f); factsCard.anchorMax = new Vector2(0.93f, 0.78f); }
+            if (portrait) { factsCard.anchorMin = new Vector2(0.07f, 0.035f); factsCard.anchorMax = new Vector2(0.93f, 0.245f); }
+            else { factsCard.anchorMin = new Vector2(0.6f, 0.12f); factsCard.anchorMax = new Vector2(0.9f, 0.72f); }
             factsCard.offsetMin = factsCard.offsetMax = Vector2.zero;
         }
 

@@ -55,7 +55,10 @@ namespace Portfolio
                 var window = (RectTransform)t.art.transform.parent;
                 window.gameObject.AddComponent<RectMask2D>().padding = new Vector4(0, 2, 0, 0); // keep the divider line
                 var ar = t.art.rectTransform;
-                ar.anchorMin = ar.anchorMax = ar.pivot = new Vector2(0.5f, 0.5f);
+                // Pin the chosen point of the photo to the same point of the window, so the crop slides toward it
+                // without ever leaving a gap.
+                var focus = new Vector2(Mathf.Clamp01(project.coverFocus.x), Mathf.Clamp01(project.coverFocus.y));
+                ar.anchorMin = ar.anchorMax = ar.pivot = focus;
                 var fit = t.art.gameObject.AddComponent<AspectRatioFitter>();
                 fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
                 fit.aspectRatio = project.cover.rect.width / project.cover.rect.height;

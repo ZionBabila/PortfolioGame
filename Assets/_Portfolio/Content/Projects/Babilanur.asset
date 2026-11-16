@@ -17,6 +17,7 @@ MonoBehaviour:
   year: 
   category: "Lighting \xB7 Interactive"
   cover: {fileID: 21300000, guid: 596faf1e5cba0224c97a8fbe63563f21, type: 3}
+  coverFocus: {x: 0.5, y: 0.9}
   accent: {r: 0.72156864, g: 0.5254902, b: 0.16862746, a: 1}
   gallery:
   - image: {fileID: 21300000, guid: 407638f85dd138c46b1a33cce3a06fd6, type: 3}

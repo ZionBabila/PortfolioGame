@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a231eea62523459793eb6f5551be206c, type: 3}
+  m_Name: LayersLamp
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.ProjectData
+  title: Layers Lamp
+  tagline: 'A build-it-yourself lamp for my light design workshop: layers of laser-cut acrylic around a glowing globe.'
+  year: 
+  category: "Lighting \xB7 Workshop kit"
+  cover: {fileID: 21300000, guid: 1da94288d3fba66468bcbf717b10af88, type: 3}
+  coverFocus: {x: 0.5, y: 0.5}
+  accent: {r: 0.9098039, g: 0.4627451, b: 0.14901961, a: 1}
+  gallery:
+  - image: {fileID: 21300000, guid: 1da94288d3fba66468bcbf717b10af88, type: 3}
+    caption: Orange acrylic layers around the globe
+  - image: {fileID: 21300000, guid: 409a71f948cb49f40976f3643976e9c1, type: 3}
+    caption: The kit, ready on the table
+  - image: {fileID: 21300000, guid: e501c8d8647b1914baeb0790cb7f6d0d, type: 3}
+    caption: One sheet, a whole workshop of parts
+  explodedView: {fileID: 21300000, guid: e78212cd50512ad4ca729b770e14e51f, type: 3}
+  explodedCaption: 'Assembly: back panel, acrylic layers, the globe holder, front panel, spacers and screws'
+  challenge: Design a lamp that anyone can build in about an hour, inside a two-and-a-half-hour light design workshop. Simple tools only, no gluing or soldering, and a result people are proud to take home.
+  solution: Five laser-cut acrylic panels hold an 8 cm light globe between them. The coloured layers stack and filter the light, so the glow changes as you walk around it. Spacers and screws hold it all together, and each participant stamps the logo into their own lamp with a punch and hammer.
+  process: 'Every workshop opens with a short talk on light as a material: quality, intensity, colour, direction and contrast, with my Helena Rubinstein museum project as a case study. Then each participant builds their own lamp from a ready kit.
+
+
+    The parts for a whole workshop are nested on a single 1300 x 900 mm acrylic sheet, so the kit stays cheap and fast to cut.'
+  role: 
+  duration: 
+  context: Babilanur light design workshop
+  tools: Laser-cut acrylic, 8 cm LED globe, USB cable, spacers and screws
+  facts:
+  - label: Build time
+    value: About an hour, inside a 2.5-hour workshop
+  - label: Kit
+    value: 5 acrylic panels, globe, cable, 8 spacers, 8 screws
+  - label: Tools
+    value: Hex key, countersink, punch and hammer
+  links: []

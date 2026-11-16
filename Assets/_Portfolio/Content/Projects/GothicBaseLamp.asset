@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a231eea62523459793eb6f5551be206c, type: 3}
+  m_Name: GothicBaseLamp
+  m_EditorClassIdentifier: Assembly-CSharp::Portfolio.ProjectData
+  title: Gothic Base Lamp
+  tagline: 'The workshop''s second design: a light globe resting on a base of interlocking acrylic fins.'
+  year: 
+  category: "Lighting \xB7 Workshop kit"
+  cover: {fileID: 21300000, guid: ce77bd0701e7ad045a51023b821411f1, type: 3}
+  coverFocus: {x: 0.5, y: 0.5}
+  accent: {r: 0.61960787, g: 0.24313726, b: 0.19607843, a: 1}
+  gallery:
+  - image: {fileID: 21300000, guid: 02c1e4f77caf2cb499ab4fcf2d0f58eb, type: 3}
+    caption: The prototype and fin sets at the workshop
+  explodedView: {fileID: 21300000, guid: f707052f38f03e24a89df1b2edc25bfb, type: 3}
+  explodedCaption: A light globe on interlocking acrylic fins
+  challenge: 
+  solution: 'Flat laser-cut fins slot into each other to form a sculptural base that cradles the globe. No glue and no screws: the slots hold the shape, and the clear fins catch the glow and throw their outline onto the table.'
+  process: 'Workshop participants choose one of two designs. This one goes together faster, which leaves more time to play: different acrylic colours, finishes and, for the curious, a simple sensor that makes the light respond.'
+  role: 
+  duration: 
+  context: Babilanur light design workshop
+  tools: Laser-cut acrylic, 8 cm LED globe
+  facts:
+  - label: Joints
+    value: Slots only, no glue or screws
+  links: []

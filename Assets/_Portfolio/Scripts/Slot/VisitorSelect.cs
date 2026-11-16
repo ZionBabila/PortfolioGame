@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Portfolio.Slot
 {
     /// <summary>
-    /// "Welcome to my studio. Who are you today?" Shown on the first visit (and from the HUD's "Visiting as" stamp):
+    /// "Discover what you need to know: who are you?" Shown on the first visit (and from the HUD's "Visiting as" stamp):
     /// the visitor picks HR, Team Lead, Head of Department or Just visiting. The fortune machine tells each of them
     /// different things, and the player's figure is dressed for the part.
     /// </summary>
@@ -156,12 +156,12 @@ namespace Portfolio.Slot
             v.spacing = 14; v.childControlWidth = v.childControlHeight = true; v.childForceExpandHeight = false;
 
             var kicker = Text("Kicker", col, 20, FontStyles.Normal, accent, TextAlignmentOptions.Left, labelFont);
-            kicker.text = "ZION BABILA  ·  STUDIO"; kicker.characterSpacing = 12;
+            kicker.text = "WELCOME TO ZION BABILA'S STUDIO"; kicker.characterSpacing = 12;
             var title = Text("Title", col, 54, FontStyles.Bold, ink, TextAlignmentOptions.Left, typeFont);
-            title.text = "Welcome to my studio.";
+            title.text = "Discover what you need to know.";
             titleText = title;
             var sub = Text("Sub", col, 30, FontStyles.Italic, soft, TextAlignmentOptions.Left, typeFont);
-            sub.text = "Who are you today? The fortune machine will tell you what you came to hear.";
+            sub.text = "Tell me who you are, and the fortune machine will reveal what matters to you.";
 
             var grid = UIObj("Roles", col);
             var g = grid.gameObject.AddComponent<GridLayoutGroup>();

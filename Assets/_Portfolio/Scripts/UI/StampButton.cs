@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Portfolio
@@ -18,6 +19,11 @@ namespace Portfolio
         float restTilt, tilt, scale = 1f;
         bool tiltSized;
         bool over, down;
+        // Hover hysteresis: straightening and growing moves the stamp's edge under the cursor, which used to fire
+        // exit/enter in a loop at the border. An exit within this margin keeps the hover until the cursor really leaves.
+        const float ExitMargin = 14f;
+        bool lingering;
+        Camera eventCam;
 
         /// <summary>
         /// Turns an existing button (e.g. a LinkButton) into a stamp. <paramref name="paperBacking"/> puts the stamp on a
@@ -71,8 +77,25 @@ namespace Portfolio
             return s;
         }
 
-        public void OnPointerEnter(PointerEventData e) { over = true; Refresh(); }
-        public void OnPointerExit(PointerEventData e) { over = false; down = false; Refresh(); }
+        public void OnPointerEnter(PointerEventData e) { over = true; lingering = false; Refresh(); }
+        public void OnPointerExit(PointerEventData e)
+        {
+            down = false;
+            eventCam = e.enterEventCamera;
+            bool touch = e is UnityEngine.InputSystem.UI.ExtendedPointerEventData x ? x.pointerType == UnityEngine.InputSystem.UI.UIPointerType.Touch : Pointer.current is Touchscreen;
+            lingering = !touch && Near(e.position); // never on touch: a lifted finger is gone
+            if (!lingering) over = false;
+            Refresh();
+        }
+
+        bool Near(Vector2 screen)
+        {
+            var rt = (RectTransform)transform;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, screen, eventCam, out var local)) return false;
+            var r = rt.rect;
+            r.xMin -= ExitMargin; r.yMin -= ExitMargin; r.xMax += ExitMargin; r.yMax += ExitMargin;
+            return r.Contains(local);
+        }
         public void OnPointerDown(PointerEventData e) { down = true; Refresh(); }
         public void OnPointerUp(PointerEventData e)
         {
@@ -83,7 +106,7 @@ namespace Portfolio
 
         void OnDisable()
         {
-            over = down = false;
+            over = down = lingering = false;
             tilt = restTilt;
             scale = 1f;
             transform.localRotation = Quaternion.Euler(0, 0, restTilt);
@@ -111,6 +134,12 @@ namespace Portfolio
                     if (!over && !down) tilt = restTilt;
                     tiltSized = true;
                 }
+            }
+
+            if (lingering)
+            {
+                var p = Pointer.current;
+                if (p == null || !Near(p.position.ReadValue())) { lingering = false; over = false; Refresh(); }
             }
 
             bool lit = over || down;

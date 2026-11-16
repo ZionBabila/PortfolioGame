@@ -19,21 +19,19 @@ MonoBehaviour:
   image: {fileID: 0}
   accent: {r: 0.98, g: 0.62, b: 0.32, a: 1}
   links:
-  - label: CV - Tech Artist
-    url: cv/Zion_Babila_CV_Tech_Artist.pdf
-  - label: CV - Industrial Designer
-    url: cv/Zion_Babila_CV_Industrial_Designer.pdf
+  - label: Get my CV
+    url: '#cv-code'
   projects: []
   variants:
   - profile: techart
     subtitle: Tech artist / game developer
     body: "An industrial designer and game developer, looking for a Tech Artist role. Years of building playable, sensor-driven products with microcontrollers and custom electronics taught me how things should respond to people.\n\nToday Unity is where my passions meet: I script gameplay, build visual and animation pipelines, and shape how games look, move and feel. I'm at my best where mechanics and aesthetics meet, where engineering logic and visual design live in the same space."
     links:
-    - label: Download CV
-      url: cv/Zion_Babila_CV_Tech_Artist.pdf
+    - label: Get my CV
+      url: '#cv-code'
   - profile: design
     subtitle: Industrial designer / maker
     body: "An industrial designer and maker who builds physical products people interact with, and play with. Years of hands-on product design, from concept and CAD to electronics, fabrication and manufacturing.\n\nFormal game-design training shapes how I think about interaction, feedback and engagement. I create objects that respond: touch-controlled lighting, sensor-driven products, and large-scale playable installations."
     links:
-    - label: Download CV
-      url: cv/Zion_Babila_CV_Industrial_Designer.pdf
+    - label: Get my CV
+      url: '#cv-code'

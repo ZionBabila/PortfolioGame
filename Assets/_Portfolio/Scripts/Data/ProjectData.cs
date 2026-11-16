@@ -36,6 +36,9 @@ namespace Portfolio
         public string category;
         [Tooltip("The hero shot: the finished product, clean background. Also the card thumbnail.")]
         public Sprite cover;
+        [Tooltip("Which part of the cover the ticket shows (its window is wide, so tall photos get cropped). " +
+                 "X: 0 = left, 1 = right. Y: 0 = bottom, 1 = top. (0.5, 0.5) = the middle.")]
+        public Vector2 coverFocus = new(0.5f, 0.5f);
         public Color accent = new(0.42f, 0.62f, 0.95f);
 
         [Header("Images (2-5)")]

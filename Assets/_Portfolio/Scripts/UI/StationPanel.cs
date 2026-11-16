@@ -162,6 +162,12 @@ namespace Portfolio
                 }
                 foreach (var link in data.LinksNow)
                 {
+                    if (link.url == CvAccess.Marker)
+                    {
+                        var cv = CvCodeEntry.Build(linksRoot, null, font, linkTemplate, 0);
+                        if (cv) projectCards.Add(cv);
+                        continue;
+                    }
                     var b = Instantiate(linkTemplate, linksRoot);
                     b.gameObject.SetActive(true);
                     b.Bind(link);
@@ -213,6 +219,13 @@ namespace Portfolio
             int stampCount = 0;
             foreach (var link in data.LinksNow)
             {
+                if (link.url == CvAccess.Marker)
+                {
+                    // "Get my CV": a code box; the code decides which CV is offered.
+                    var cv = CvCodeEntry.Build(linksRoot, skin, font, linkTemplate, stampCount);
+                    if (cv) { projectCards.Add(cv); stampCount += 2; }
+                    continue;
+                }
                 if (gameLinks)
                 {
                     TicketCard.ForLink(Deck(), skin, link, ticketCount++, font);

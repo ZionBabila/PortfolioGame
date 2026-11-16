@@ -34,21 +34,32 @@ namespace Portfolio.Slot
             spot.AddTag();
         }
 
+        TMP_Text tag;
+        float tilt;
+
+        /// <summary>The same paper name tag as the stations, a little higher so it clears the "You" tag beside it.</summary>
         void AddTag()
         {
             var skin = UISkin.Default;
             var r = GetComponent<Renderer>();
             float top = r ? r.bounds.max.y : transform.position.y + 2f;
-            var tag = new GameObject("Tag").AddComponent<TextMeshPro>();
+            tag = new GameObject("Label").AddComponent<TextMeshPro>();
             tag.transform.SetParent(transform, true);
-            tag.transform.position = new Vector3(r ? r.bounds.center.x : transform.position.x, top + 0.7f, r ? r.bounds.center.z : transform.position.z);
-            tag.text = "Fortune machine";
-            tag.fontSize = 3.2f; tag.fontStyle = FontStyles.Bold; tag.alignment = TextAlignmentOptions.Center;
-            tag.rectTransform.sizeDelta = new Vector2(8, 1.2f);
-            if (skin && skin.typewriter) tag.font = skin.typewriter;
-            tag.color = skin ? skin.accent : new Color(0.89f, 0.38f, 0.12f);
-            tag.outlineWidth = 0.22f; tag.outlineColor = skin ? (Color32)skin.paper : new Color32(239, 233, 220, 255);
-            tag.gameObject.AddComponent<FaceCamera>();
+            tag.transform.position = new Vector3(r ? r.bounds.center.x : transform.position.x, top + 1.0f, r ? r.bounds.center.z : transform.position.z);
+            tag.text = "Fortune Machine";
+            if (TMP_Settings.defaultFontAsset) tag.font = TMP_Settings.defaultFontAsset;
+            tag.rectTransform.sizeDelta = new Vector2(8f, 1.5f);
+            tag.fontSize = 5f * 0.6f; // the station labels' size
+            tag.alignment = TextAlignmentOptions.Center;
+            tag.textWrappingMode = TextWrappingModes.NoWrap;
+            if (skin && skin.IsReady) tilt = PaperTag.Dress(tag, skin, name);
+            else { tag.fontStyle = FontStyles.Bold; tag.color = new Color(0.89f, 0.38f, 0.12f); }
+        }
+
+        void LateUpdate()
+        {
+            var cam = Camera.main;
+            if (tag && cam) tag.transform.rotation = cam.transform.rotation * Quaternion.Euler(0f, 0f, tilt);
         }
 
         void Update()

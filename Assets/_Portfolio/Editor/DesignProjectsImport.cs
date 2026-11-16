@@ -98,6 +98,47 @@ namespace Portfolio.EditorTools
                 facts = new[] { ("Interaction", "First pet turns it on, each extra pet adds brightness, a double tap turns it off") },
                 captions = { ["g2"] = "Hand-finished glass and brass", ["g4"] = "In the workshop" },
             },
+            new Seed
+            {
+                key = "LayersLamp", title = "Layers Lamp",
+                tagline = "A build-it-yourself lamp for my light design workshop: layers of laser-cut acrylic around a glowing globe.",
+                category = "Lighting · Workshop kit", context = "Babilanur light design workshop",
+                accent = new Color32(232, 118, 38, 255),
+                challenge = "Design a lamp that anyone can build in about an hour, inside a two-and-a-half-hour light design workshop. Simple tools only, no gluing or soldering, and a result people are proud to take home.",
+                solution = "Five laser-cut acrylic panels hold an 8 cm light globe between them. The coloured layers stack and filter the light, so the glow changes as you walk around it. Spacers and screws hold it all together, and each participant stamps the logo into their own lamp with a punch and hammer.",
+                process = "Every workshop opens with a short talk on light as a material: quality, intensity, colour, direction and contrast, with my Helena Rubinstein museum project as a case study. Then each participant builds their own lamp from a ready kit.\n\nThe parts for a whole workshop are nested on a single 1300 x 900 mm acrylic sheet, so the kit stays cheap and fast to cut.",
+                tools = "Laser-cut acrylic, 8 cm LED globe, USB cable, spacers and screws",
+                facts = new[] { ("Build time", "About an hour, inside a 2.5-hour workshop"), ("Kit", "5 acrylic panels, globe, cable, 8 spacers, 8 screws"), ("Tools", "Hex key, countersink, punch and hammer") },
+                explodedCaption = "Assembly: back panel, acrylic layers, the globe holder, front panel, spacers and screws",
+                captions = { ["g1"] = "Orange acrylic layers around the globe", ["g3"] = "The kit, ready on the table", ["g4"] = "One sheet, a whole workshop of parts", ["g5"] = "The workshop table: kits, tools and both prototypes" },
+            },
+            new Seed
+            {
+                key = "GothicBaseLamp", title = "Gothic Base Lamp",
+                tagline = "The workshop's second design: a light globe resting on a base of interlocking acrylic fins.",
+                category = "Lighting · Workshop kit", context = "Babilanur light design workshop",
+                accent = new Color32(158, 62, 50, 255),
+                solution = "Flat laser-cut fins slot into each other to form a sculptural base that cradles the globe. No glue and no screws: the slots hold the shape, and the clear fins catch the glow and throw their outline onto the table.",
+                process = "Workshop participants choose one of two designs. This one goes together faster, which leaves more time to play: different acrylic colours, finishes and, for the curious, a simple sensor that makes the light respond.",
+                tools = "Laser-cut acrylic, 8 cm LED globe",
+                facts = new[] { ("Joints", "Slots only, no glue or screws") },
+                explodedCaption = "A light globe on interlocking acrylic fins",
+                captions = { ["g1"] = "The prototype and fin sets at the workshop", ["g2"] = "The workshop table" },
+            },
+            new Seed
+            {
+                key = "LedLightEngine", title = "LED Light Engine",
+                tagline = "The electronics inside my workshop lamps: a double-sided LED stick that plugs into a 12 mm USB-C base.",
+                category = "Electronics · PCB design", context = "Babilanur light design workshop",
+                accent = new Color32(52, 96, 160, 255),
+                challenge = "The workshop lamps needed a light source that anyone can handle safely, that runs from any phone charger, and that fits a 12 mm opening.",
+                solution = "I designed two small boards. A 10 x 35 mm LED stick carries six white LEDs, three on each side, so the globe glows evenly all around, and every LED has its own current-limiting resistor. It plugs with a 3-pin header into a 12 mm base that holds a USB-C socket, a resettable fuse and ESD protection, so it runs safely from a standard 5 V USB charger.",
+                process = "Designed in EasyEDA with standard LCSC parts, and ordered assembled from the Gerber, BOM and pick-and-place files. The parts for each lamp cost well under a dollar, which keeps the workshop kit affordable.",
+                tools = "EasyEDA, 2835 SMD LEDs, USB-C, PTC fuse, TVS diode",
+                facts = new[] { ("Boards", "LED stick 10 x 35 mm, base 12 x 12 mm"), ("Power", "5 V from USB-C"), ("LEDs", "6 x 2835 white, 3 on each side"), ("Parts cost", "Under $0.25 per lamp, boards not included") },
+                explodedCaption = "The LED stick plugs into the 12 mm USB-C base",
+                captions = { ["g1"] = "The LED stick: three LEDs and resistors on each side", ["g2"] = "The base: USB-C, fuse and ESD protection" },
+            },
         };
 
         [MenuItem("Portfolio/Content/Import Design Projects")]
