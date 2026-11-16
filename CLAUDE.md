@@ -36,6 +36,28 @@ WebGL build on GitHub Pages: https://zionbabila.github.io/PortfolioGame/ . The o
 - Web: `PROJECT:Responsive` WebGL template (full window), Gzip + decompression fallback (Pages has no Content-Encoding),
   no splash, Render Scale 1 + MSAA 4 (Web uses the "Mobile" URP asset).
 
+## Added Nov 2026 (read before changing these)
+- **CV gate** (About station): a link with url `#cv-code` is replaced at runtime by `CvCodeEntry` (code box + Unlock).
+  Codes and their PDF paths live in `Resources/CvAccess.asset` (`CvAccess.Find` normalizes case, spaces, dashes).
+  Every CV is served as `cv/<folder>/ZionBabila_CV.pdf` with the same "Download CV" label, so a visitor can't tell
+  there is more than one version. Never put the codes or the CV variants in docs, commit messages or chat summaries.
+- **Projects import**: `Portfolio → Content → Import Design Projects` (`Editor/DesignProjectsImport.cs`) holds seeds
+  (text) per project key; images go in `Content/Projects/Images/<Key>/<Key>_cover|_exploded|_gN.jpg`. It never
+  overwrites an existing project asset, but it **resets `03_Projects` order** on every run.
+- `ProjectData.coverFocus` picks which part of the cover the ticket card shows (0..1, (0.5,0.9) = near the top).
+- `PaperTag.Dress` gives any 3D TMP label the paper tag + orange underline (stations and the fortune machine).
+- Batch Unity (Editor closed; check `Temp/UnityLockfile` first): `Unity.exe -batchmode -nographics -projectPath <path>
+  -executeMethod Portfolio.EditorTools.<Class>.<Method> -quit -logFile <file>`. Editor namespace is `Portfolio.EditorTools`
+  (e.g. `WorkshopLayoutTools.BatchSync`, `WebBuild.BuildCli`, `DesignProjectsImport.Run`).
+- Project boards (paper, typed title tag, photos left, annotated drawing right, 1600x900) are made with Python/PIL
+  scripts that are not in this repo yet.
+
+## Two machines (desktop + Lenovo laptop)
+- Pull before you start, commit + push before switching. `Workshop.unity` and `Workshop.blend` can't be merged: never
+  edit them on both machines between pushes.
+- Status, to-do list and open decisions for this project live in the private `claude-hub` repo
+  (`notes/portfolio-game.md`), not here (this repo is public).
+
 ## Build & publish
 - In Unity: **Portfolio → Publish To Website (Build + Upload)**, or Build WebGL then answer the dialog.
 - Without the menu: build to `Builds/WebGL`, then `pwsh -File deploy.ps1 -SkipBuild` (copies to the `gh-pages`
