@@ -123,7 +123,7 @@ namespace Portfolio.EditorTools
                 tools = "Laser-cut acrylic, 8 cm LED globe",
                 facts = new[] { ("Joints", "Slots only, no glue or screws") },
                 explodedCaption = "A light globe on interlocking acrylic fins",
-                captions = { ["g1"] = "The prototype and fin sets at the workshop", ["g2"] = "The workshop table" },
+                captions = { ["g1"] = "Lit: the iridescent fins catch the glow", ["g2"] = "From above: four fin pairs around the globe", ["g3"] = "A black acrylic version with a clear globe", ["g4"] = "The first render", ["g5"] = "The prototype and fin sets at the workshop" },
             },
             new Seed
             {
@@ -137,7 +137,7 @@ namespace Portfolio.EditorTools
                 tools = "EasyEDA, 2835 SMD LEDs, USB-C, PTC fuse, TVS diode",
                 facts = new[] { ("Boards", "LED stick 10 x 35 mm, base 12 x 12 mm"), ("Power", "5 V from USB-C"), ("LEDs", "6 x 2835 white, 3 on each side"), ("Parts cost", "Under $0.25 per lamp, boards not included") },
                 explodedCaption = "The LED stick plugs into the 12 mm USB-C base",
-                captions = { ["g1"] = "The LED stick: three LEDs and resistors on each side", ["g2"] = "The base: USB-C, fuse and ESD protection" },
+                captions = { ["g1"] = "The three parts: socket and cable, USB-C base, LED stick", ["g2"] = "The LED stick next to the base in its printed cap", ["g3"] = "The other side: three more LEDs, and USB-C under the base", ["g4"] = "The base board, screwed into a printed cap", ["g5"] = "Lighting a clear globe on the black fin base" },
             },
         };
 
@@ -168,7 +168,10 @@ namespace Portfolio.EditorTools
             var station = AssetDatabase.LoadAssetAtPath<StationData>(StationPath);
             if (station)
             {
-                station.projects = created;
+                // Keep the owner's order; only append projects that aren't listed yet.
+                var order = (station.projects ?? new List<ProjectData>()).Where(p => p).ToList();
+                foreach (var p in created) if (!order.Contains(p)) order.Add(p);
+                station.projects = order;
                 if (station.body.StartsWith("Highlights of projects"))
                     station.body = "Industrial design and lighting: products, a museum installation and interactive pieces. Open a ticket to see the story behind each one.";
                 if (station.subtitle == "Selected work") station.subtitle = "Industrial design";
@@ -180,6 +183,41 @@ namespace Portfolio.EditorTools
             Debug.Log($"[Projects] {made} new, {created.Count} listed in 03_Projects.");
             Selection.activeObject = station;
         }
+
+        /// <summary>Re-reads the image files of existing projects (cover, exploded view, gallery + seed captions).
+        /// Text the owner edited in the Inspector is left alone, but the gallery is rebuilt from the files,
+        /// so images removed by hand come back: delete the file too, or pass only the keys you mean.</summary>
+        [MenuItem("Portfolio/Content/Refresh Project Images (all)")]
+        public static void RefreshAllImages() => RefreshImages();
+
+        public static void RefreshImages(params string[] keys)
+        {
+            AssetDatabase.Refresh();
+            foreach (var seed in Seeds)
+            {
+                if (keys.Length > 0 && !keys.Contains(seed.key)) continue;
+                var dir = $"{Images}/{seed.key}";
+                var data = AssetDatabase.LoadAssetAtPath<ProjectData>($"{Root}/{seed.key}.asset");
+                if (!data || !AssetDatabase.IsValidFolder(dir)) continue;
+                var sprites = ImportSprites(dir, seed.key);
+                if (sprites.TryGetValue("cover", out var cover)) data.cover = cover;
+                if (sprites.TryGetValue("exploded", out var ex)) data.explodedView = ex;
+                var keep = data.gallery.Where(g => g.image).ToDictionary(g => g.image.name, g => g.caption);
+                data.gallery = sprites.Keys.Where(k => k.StartsWith("g")).OrderBy(k => k).Select(k => new ProjectImage
+                {
+                    image = sprites[k],
+                    caption = s(seed, k) ?? (keep.TryGetValue(sprites[k].name, out var c) ? c : ""),
+                }).ToList();
+                EditorUtility.SetDirty(data);
+            }
+            AssetDatabase.SaveAssets();
+            Debug.Log("[Projects] Images refreshed.");
+
+            static string s(Seed seed, string k) => seed.captions.TryGetValue(k, out var c) ? c : null;
+        }
+
+        /// <summary>Batch entry: import new projects, then refresh the images of the two lamp projects.</summary>
+        public static void ImportAndRefreshLamps() { Run(); RefreshImages("GothicBaseLamp", "LedLightEngine"); }
 
         static Dictionary<string, Sprite> ImportSprites(string dir, string key)
         {

@@ -17,6 +17,7 @@ MonoBehaviour:
   year: 
   category: Interactive installation
   cover: {fileID: 21300000, guid: 4e0b983ab35935d49982c48b4dd99a18, type: 3}
+  coverFocus: {x: 0.5, y: 0.5}
   accent: {r: 0.48235294, g: 0.36078432, b: 0.7764706, a: 1}
   gallery:
   - image: {fileID: 21300000, guid: 8cdfa63f709ad124cb07fadf06baf198, type: 3}

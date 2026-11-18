@@ -17,10 +17,18 @@ MonoBehaviour:
   year: 
   category: "Lighting \xB7 Workshop kit"
   cover: {fileID: 21300000, guid: ce77bd0701e7ad045a51023b821411f1, type: 3}
-  coverFocus: {x: 0.5, y: 0.5}
+  coverFocus: {x: 0.5, y: 0.62}
   accent: {r: 0.61960787, g: 0.24313726, b: 0.19607843, a: 1}
   gallery:
   - image: {fileID: 21300000, guid: 02c1e4f77caf2cb499ab4fcf2d0f58eb, type: 3}
+    caption: 'Lit: the iridescent fins catch the glow'
+  - image: {fileID: 21300000, guid: e25f4e3f6a76f4a4da77fc4833be7637, type: 3}
+    caption: 'From above: four fin pairs around the globe'
+  - image: {fileID: 21300000, guid: 2cdf1d501bb11e4449d33dbabb437add, type: 3}
+    caption: A black acrylic version with a clear globe
+  - image: {fileID: 21300000, guid: 37d5eec18d0a5be4f9ba67465242ceb8, type: 3}
+    caption: The first render
+  - image: {fileID: 21300000, guid: 819970a2a24f65f4e9065e1cf1c30e8d, type: 3}
     caption: The prototype and fin sets at the workshop
   explodedView: {fileID: 21300000, guid: f707052f38f03e24a89df1b2edc25bfb, type: 3}
   explodedCaption: A light globe on interlocking acrylic fins
